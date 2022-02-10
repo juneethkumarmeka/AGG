@@ -93,7 +93,7 @@ class GraGra:
     
     
     
-class GraGra2XMLWriter:
+class GraGra2ggxWriter:
     """
         Converts the Graph Grammar to GGX format
         input : 
@@ -286,43 +286,41 @@ class GraGra2XMLWriter:
 #-----------------------------------------------------------------------------#
 #host 
 
-from Tags import  * 
-Host = nx.DiGraph()
-Rule1_Left = nx.DiGraph()
-Rule1_Right = nx.DiGraph()
-Rule1_NAC = nx.DiGraph()
-Rule1_NAC1 = nx.DiGraph()
+# from Tags import  * 
+# Host = nx.DiGraph()
+# Rule1_Left = nx.DiGraph()
+# Rule1_Right = nx.DiGraph()
+# Rule1_NAC = nx.DiGraph()
+# Rule1_NAC1 = nx.DiGraph()
 
-Rule1_Left.add_node("a",type = "IN")
-Rule1_Right.add_node("a",type = "IN")
-Rule1_Right.add_node("b",type = "NT")
-Rule1_Right.add_edge("a","b")
-Rule1_NAC.add_node("a", type = "IN")
-Rule1_NAC.add_node("b", type = "NT")
-Rule1_NAC.add_edge("a","b")
-Rule1_NAC1.add_node("a", type = "IN")
-Rule1_NAC1.add_node("c", type = "NT")
-Rule1_NAC1.add_edge("a","c")
-
-
-
-Rule1 = RuleTags("Rule1",Rule1_Left,Rule1_Right)
-Rule1.add_NAC("NAC1",Rule1_NAC)
-Rule1.add_NAC("NAC2",Rule1_NAC1)
-Rule2 = RuleTags("Rule2",Rule1_Left,Rule1_Right)
-Rule2.add_NAC("NAC1",Rule1_NAC)
-Rule2.add_NAC("NAC2",Rule1_NAC1)
-
-Sub1 = SubsequenceTag()
-Sub1.addRule("Rule1", "1")
-Sub1.addRule("Rule2", "2")
-
-Seq1 = SequenceTag("Rulesequence1")
-Seq1.addSubSequence(Sub1, "3")
-Seq2 = SequenceTag("Rulesequence2")
-Seq2.addSubSequence(Sub1, "4")
+# Rule1_Left.add_node("a",type = "IN")
+# Rule1_Right.add_node("a",type = "IN")
+# Rule1_Right.add_node("b",type = "NT")
+# Rule1_Right.add_edge("a","b")
+# Rule1_NAC.add_node("a", type = "IN")
+# Rule1_NAC.add_node("b", type = "NT")
+# Rule1_NAC.add_edge("a","b")
+# Rule1_NAC1.add_node("a", type = "IN")
+# Rule1_NAC1.add_node("c", type = "NT")
+# Rule1_NAC1.add_edge("a","c")
 
 
+
+# Rule1 = RuleTags("Rule1",Rule1_Left,Rule1_Right)
+# Rule1.add_NAC("NAC1",Rule1_NAC)
+# Rule1.add_NAC("NAC2",Rule1_NAC1)
+# Rule2 = RuleTags("Rule2",Rule1_Left,Rule1_Right)
+# Rule2.add_NAC("NAC1",Rule1_NAC)
+# Rule2.add_NAC("NAC2",Rule1_NAC1)
+
+# Sub1 = SubsequenceTag()
+# Sub1.addRule("Rule1", "1")
+# Sub1.addRule("Rule2", "2")
+
+# Seq1 = SequenceTag("Rulesequence1")
+# Seq1.addSubSequence(Sub1, "3")
+# Seq2 = SequenceTag("Rulesequence2")
+# Seq2.addSubSequence(Sub1, "4")
 
 
 
@@ -331,16 +329,18 @@ Seq2.addSubSequence(Sub1, "4")
 
 
 
-Host.add_node("a",type = "IN")
-HostGraph = GraphTags("Graph1","HOST",Host)
-G = GraGra("GraGra1",HostGraph)
-G.addNodeType('IN')
-G.addNodeType('NT')
-G.addNodeType('OUT')
-G.addRule(Rule1)
-G.addRule(Rule2)
-G.addRuleSequence(Seq1)
-G.addRuleSequence(Seq2)
-GraGra2XMLWriter("gfg.ggx",G)()
+
+
+# Host.add_node("a",type = "IN")
+# HostGraph = GraphTags("Graph1","HOST",Host)
+# G = GraGra("GraGra1",HostGraph)
+# G.addNodeType('IN')
+# G.addNodeType('NT')
+# G.addNodeType('OUT')
+# G.addRule(Rule1)
+# G.addRule(Rule2)
+# G.addRuleSequence(Seq1)
+# G.addRuleSequence(Seq2)
+# GraGra2ggxWriter("gfg.ggx",G)()
 
 #-----------------------------------------------------------------------------#
