@@ -63,7 +63,7 @@ class GGX2Networkx:
 
 #Testing
 #-----------------------------------------------------------------------------#
-# g1 = GGX2Networkx("gfg.ggx")
+# g1 = GGX2Networkx("Tree_Structure_out.ggx")
 # graph = g1.getGraph()
 # nx.draw(graph,with_labels = True)
 #-----------------------------------------------------------------------------#
