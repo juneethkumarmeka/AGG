@@ -41,12 +41,15 @@ class GGX2Networkx:
                             ID = eachtype.attrib["ID"]
                             name = eachtype.attrib["name"].split("%")[0]
                             self.nodeTypes[ID] = name 
-                elif eachchild.tag == "Graph":
+                if eachchild.tag == "Graph":
                     for each in eachchild:
                         if each.tag == "Node":
                             name = each.attrib["ID"]
-                            type_ = each.attrib["type"]
-                            self.graph.add_node(name,type = self.nodeTypes[type_])
+                            type_ = self.nodeTypes[each.attrib["type"]]
+                            try:
+                                type_ = str(each[0][0][0].text).lower()
+                            except : pass 
+                            self.graph.add_node(name,type = type_)
                         elif each.tag == "Edge":
                             source = each.attrib["source"]
                             target = each.attrib["target"]
@@ -63,7 +66,7 @@ class GGX2Networkx:
 
 #Testing
 #-----------------------------------------------------------------------------#
-# g1 = GGX2Networkx("Tree_Structure_out.ggx")
+# g1 = GGX2Networkx("Probability_out.ggx")
 # graph = g1.getGraph()
 # nx.draw(graph,with_labels = True)
 #-----------------------------------------------------------------------------#
