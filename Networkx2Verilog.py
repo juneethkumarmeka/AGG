@@ -2,7 +2,9 @@
 """
 Created on Thu Nov 11 20:22:09 2021
 
-@author: 15133
+@author: JuneethKumar Meka
+
+Project Name : Graph Grammar Attribute Benchmark Generator
 """
 import networkx as nx 
 
@@ -21,7 +23,7 @@ class Instance :
     def get_fanout(self): return self.fanout 
     
     
-class Write_Verilog:
+class Networkx2Verilog:
     def __init__(self,graph,modulename,filename,mode = 'w',inclusion_statements = []):
         self.graph = graph 
         self.filename = filename 
@@ -82,7 +84,14 @@ class Write_Verilog:
         fp.write("endmodule\n\n\n")
         
 
-
+#Testing
+#-----------------------------------------------------------------------------#
+# from GGX2Networkx import GGX2Networkx
+# g1 = GGX2Networkx("gfg_out.ggx")
+# graph = g1.getGraph()
+# nx.draw(graph,with_labels = True)
+# Write_Verilog(graph,"test", "test.v")
+#-----------------------------------------------------------------------------#
        
             
             

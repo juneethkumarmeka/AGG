@@ -8,6 +8,7 @@ Project Name : Graph Grammar Attribute Benchmark Generator
 #-----------------------------------------------------------------------------#
 from TagCreator import xml_writer
 from TagCreator import CreateTag
+from TagCreator import CreateText
 from TagCreator import WriteTaggedValue
 import networkx as nx
 from Tags import GraphTags
@@ -35,7 +36,7 @@ class GraGra:
     def __init__(self,name,HostGraph = GraphTags("Graph1","HOST",nx.DiGraph())):
         
         self.name = name 
-        self.nodeTypes = []
+        self.nodeTypes = {}
         self.edgeTypes = " "
         self.HostGraph = HostGraph
         self.Rules = []
@@ -47,7 +48,13 @@ class GraGra:
             inputs : 
                 val : str
         """
-        self.nodeTypes.append(val)
+        self.nodeTypes[val] = []
+        
+    def addNodeTypeAttribute(self,nodetype,value,datatype):
+        """
+            Add the Attribute to the node Type
+        """
+        self.nodeTypes[nodetype].append([value,datatype])
     
     def addRule(self,val): 
         """
@@ -126,11 +133,26 @@ class GraGra2ggxWriter:
         # Adding the Node Tags to the Graph Tag 
         for eachnode in GraphTag.getGraph().nodes:
             node_type = GraphTag.getGraph().nodes[eachnode]["type"]
+            attributes = GraphTag.getGraph().nodes[eachnode].keys()
             try:
-                node_type_ID = self.Tags["NodeType"][node_type].getattribute("ID")
+                node_type_ID = self.Tags["NodeType"][node_type]["main"].getattribute("ID")
                 node_ID = self.ID()
                 GraphTag.addID(eachnode, node_ID)
-                CreateTag("Node",graphwriterTag.getTag(),ID = node_ID,type = node_type_ID)
+                nodeTag = CreateTag("Node",graphwriterTag.getTag(),ID = node_ID,type = node_type_ID)
+                for each in attributes :
+                    if each != "type":
+                        attr = each 
+                        val = GraphTag.getGraph().nodes[eachnode][each]
+                        type_val = type(val).__name__
+                        if type_val == "str":
+                            type_val = "string"
+                        attr_id = self.Tags["NodeType"][node_type][attr].getattribute("ID")
+                        attrTag = CreateTag("Attribute",nodeTag.getTag(),constant = "true",type = attr_id)
+                        valueTag = CreateTag("Value",attrTag.getTag())
+                        typeTag = CreateTag(type_val, valueTag.getTag())
+                        CreateText(str(val), typeTag.getTag())
+                    
+                        
             except: raise Exception("{} Node type is not defined".format(node_type))
         
         # Adding the Edge Tag to the Graph Tag 
@@ -243,11 +265,23 @@ class GraGra2ggxWriter:
         self.Tags["NodeType"] = {}
         
         # Adding the NodeType Tags 
-        for each in self.GraGra.getNodeTypes():
-            self.Tags["NodeType"][each] = CreateTag("NodeType",self.Tags["Types"].getTag(),
+        for each,values in self.GraGra.getNodeTypes().items():
+            self.Tags["NodeType"][each] = {}
+            self.Tags["NodeType"][each]["main"] = CreateTag("NodeType",self.Tags["Types"].getTag(),
                                                     ID = self.ID(),abstarct = "false",
                                                     name="{}%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:".format(each))
         
+            for eachattrib in values:
+                self.Tags["NodeType"][each][eachattrib[0]] = CreateTag("AttrType",
+                                                                    self.Tags["NodeType"][each]["main"].getTag(),
+                                                                    ID = self.ID(),
+                                                                    attrname = eachattrib[0],
+                                                                    typename = eachattrib[1],
+                                                                    visible = "true")
+                
+                
+                
+            
         # Adding EdgeType Tags 
         self.Tags["EdgeType"] = CreateTag("EdgeType",self.Tags["Types"].getTag(),
                                                     ID = self.ID(),abstarct = "false",
@@ -295,13 +329,13 @@ class GraGra2ggxWriter:
 
 # Rule1_Left.add_node("a",type = "IN")
 # Rule1_Right.add_node("a",type = "IN")
-# Rule1_Right.add_node("b",type = "NT")
+# Rule1_Right.add_node("b",type = "NT",gateType = "And")
 # Rule1_Right.add_edge("a","b")
 # Rule1_NAC.add_node("a", type = "IN")
-# Rule1_NAC.add_node("b", type = "NT")
+# Rule1_NAC.add_node("b", type = "NT",gateType = "Or")
 # Rule1_NAC.add_edge("a","b")
 # Rule1_NAC1.add_node("a", type = "IN")
-# Rule1_NAC1.add_node("c", type = "NT")
+# Rule1_NAC1.add_node("c", type = "NT",gateType = "Xor")
 # Rule1_NAC1.add_edge("a","c")
 
 
@@ -323,24 +357,17 @@ class GraGra2ggxWriter:
 # Seq2.addSubSequence(Sub1, "4")
 
 
-
-
-
-
-
-
-
-
 # Host.add_node("a",type = "IN")
 # HostGraph = GraphTags("Graph1","HOST",Host)
 # G = GraGra("GraGra1",HostGraph)
 # G.addNodeType('IN')
 # G.addNodeType('NT')
+# G.addNodeTypeAttribute("NT","gateType", "String")
 # G.addNodeType('OUT')
 # G.addRule(Rule1)
 # G.addRule(Rule2)
 # G.addRuleSequence(Seq1)
 # G.addRuleSequence(Seq2)
-# GraGra2ggxWriter("gfg.ggx",G)()
+# GraGra2ggxWriter("../gfg.ggx",G)()
 
 #-----------------------------------------------------------------------------#

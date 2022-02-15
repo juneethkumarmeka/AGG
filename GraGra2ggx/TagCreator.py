@@ -57,7 +57,16 @@ class CreateTag(xml_writer):
         try: return self.kwargs[attribute]
         except : pass
 
+class CreateText(xml_writer):
+    def __init__(self,text,parent):
+        super(CreateText, self).__init__()
+        self.tagged = self.root.createTextNode(text)
+        parent.appendChild(self.tagged)
     
+    def getTag(self): return self.tagged
+    
+        
+        
 class WriteTaggedValue:
     """
         Writes the default Taggedvalue to the GT Parent Node 
