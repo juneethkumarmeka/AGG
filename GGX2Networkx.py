@@ -48,6 +48,7 @@ class GGX2Networkx:
                             type_ = self.nodeTypes[each.attrib["type"]]
                             try:
                                 type_ = str(each[0][0][0].text).lower()
+                                print(type_)
                             except : pass 
                             self.graph.add_node(name,type = type_)
                         elif each.tag == "Edge":
@@ -66,7 +67,7 @@ class GGX2Networkx:
 
 #Testing
 #-----------------------------------------------------------------------------#
-# g1 = GGX2Networkx("Probability_out.ggx")
+# g1 = GGX2Networkx("gfg_out.ggx")
 # graph = g1.getGraph()
 # nx.draw(graph,with_labels = True)
 #-----------------------------------------------------------------------------#
