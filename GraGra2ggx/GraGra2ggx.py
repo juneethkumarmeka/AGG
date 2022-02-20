@@ -6,12 +6,12 @@ Project Name : Graph Grammar Attribute Benchmark Generator
 
 #Modules
 #-----------------------------------------------------------------------------#
-from TagCreator import xml_writer
-from TagCreator import CreateTag
-from TagCreator import CreateText
-from TagCreator import WriteTaggedValue
+from GraGra2ggx.TagCreator import xml_writer
+from GraGra2ggx.TagCreator import CreateTag
+from GraGra2ggx.TagCreator import CreateText
+from GraGra2ggx.TagCreator import WriteTaggedValue
 import networkx as nx
-from Tags import GraphTags
+from GraGra2ggx.Tags import GraphTags
 
 #-----------------------------------------------------------------------------#
 
@@ -147,7 +147,7 @@ class GraGra2ggxWriter:
                         if type_val == "str":
                             type_val = "string"
                         attr_id = self.Tags["NodeType"][node_type][attr].getattribute("ID")
-                        attrTag = CreateTag("Attribute",nodeTag.getTag(),constant = "true",type = attr_id)
+                        attrTag = CreateTag("Attribute",nodeTag.getTag(),type = attr_id)
                         valueTag = CreateTag("Value",attrTag.getTag())
                         typeTag = CreateTag(type_val, valueTag.getTag())
                         CreateText(str(val), typeTag.getTag())
