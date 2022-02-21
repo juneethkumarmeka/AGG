@@ -142,10 +142,10 @@ class GraGra2ggxWriter:
                 for each in attributes :
                     if each != "type":
                         attr = each 
-                        try:
+                        if type(GraphTag.getGraph().nodes[eachnode][each]) == list:
                             val = GraphTag.getGraph().nodes[eachnode][each][0]
                             nature = GraphTag.getGraph().nodes[eachnode][each][1]
-                        except: 
+                        else: 
                             val = GraphTag.getGraph().nodes[eachnode][each]
                             nature = "const"
                             
