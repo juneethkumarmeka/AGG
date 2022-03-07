@@ -86,11 +86,11 @@ class Networkx2Verilog:
 
 #Testing
 #-----------------------------------------------------------------------------#
-# from GGX2Networkx import GGX2Networkx
-# g1 = GGX2Networkx("gfg_out.ggx")
-# graph = g1.getGraph()
+from GGX2Networkx import GGX2Networkx
+g1 = GGX2Networkx("test_out.ggx")
+graph = g1.getGraph()
 # nx.draw(graph,with_labels = True)
-# Write_Verilog(graph,"test", "test.v")
+Networkx2Verilog(graph,"test", "test.v")
 #-----------------------------------------------------------------------------#
        
             
