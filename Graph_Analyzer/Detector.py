@@ -138,7 +138,6 @@ def detector_test(self,nodes = 10,fanin=4,fanout=3):
                         matching_node_list = post_nodes + pre_nodes
                         matching_node_list = list(set(matching_node_list))
                         d_sub_graph = d_graph_obj.subgraph(matching_node_list)
-                        
                         match = 0
                         match = 0
                         if len(all_connected_subgraphs) == 0:
@@ -166,7 +165,8 @@ def detector_test(self,nodes = 10,fanin=4,fanout=3):
     #Writing the extracted data to the file given as output file
     #print("Writing to file")
     outfile = open(self.filename, "w")
-    for subgraph_ele in all_connected_subgraphs:	
+    for subgraph_ele in all_connected_subgraphs:
+        node_attribues=nx.get_node_attributes(getitem(subgraph_ele,0),'type')
         grap_dict = nx.to_dict_of_dicts(getitem(subgraph_ele,0))
         list_edge = nx.to_edgelist(getitem(subgraph_ele,0))
         l_edge = list(list_edge)
@@ -176,6 +176,7 @@ def detector_test(self,nodes = 10,fanin=4,fanout=3):
             "FREQUENCY" : getitem(subgraph_ele,1),
             "SUB_GRAPH" : grap_dict,
             "SUB_GRAPH_EDGE_LIST" : l_edge,
+            "NODE_ATTRIBUTES"   : node_attribues,
         }
         json.dump(dictionary, outfile)
         outfile.write('\n')
