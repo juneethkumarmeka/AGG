@@ -82,16 +82,6 @@ class Networkx2Verilog:
         for each in self.instace_string:
             fp.write(each)
         fp.write("endmodule\n\n\n")
-        
-
-#Testing
-#-----------------------------------------------------------------------------#
-from GGX2Networkx import GGX2Networkx
-g1 = GGX2Networkx("test_out.ggx")
-graph = g1.getGraph()
-# nx.draw(graph,with_labels = True)
-Networkx2Verilog(graph,"test", "test.v")
-#-----------------------------------------------------------------------------#
        
             
             

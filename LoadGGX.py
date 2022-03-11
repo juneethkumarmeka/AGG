@@ -21,7 +21,7 @@ class LoadGGX:
             raise Exception("{} not found".format(file))
     
     def __call__(self):
-        os.system('java -Dfile.encoding=UTF-8 \
+        os.system('java -Xmx10g -XX:+UseParallelGC -Dfile.encoding=UTF-8 \
                   -classpath "AGG/bin" \
                   agg_execution.Importing {}'.format(self.file))
         

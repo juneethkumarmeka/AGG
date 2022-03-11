@@ -1,5 +1,5 @@
 """
-@author: M.Satya Amarkant, JuneethKumar Meka
+@author: M.Satya Amarkant
 
 Project Name : Graph Grammar Attribute Benchmark Generator
 Description : Various subgraphs and patterns will be extracted from the given input directory (containing various verilog files of the benchmarks)

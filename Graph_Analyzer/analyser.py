@@ -1,5 +1,5 @@
 """
-@author: M.Satya Amarkant, JuneethKumar Meka
+@author: M.Satya Amarkant
 
 Project Name : Graph Grammar Attribute Benchmark Generator
 Description:- This module takes the file containing frequency list and it's respective subgraph edge lists. And, in this file we will analyze the sub-graphs 

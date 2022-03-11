@@ -64,6 +64,7 @@ public class RuleSequencesGraTraImpl extends GraTra {
 	public boolean setGraGra(GraGra gg) {
 		boolean res = super.setGraGra(gg);
 		if (this.grammar.getRuleSequenceList() != null) {
+			this.ruleSequence = new RuleSequence(gg,"RuleSequence");
 			setRuleSequence(this.grammar.getRuleSequenceList());
 		}
 		return res;
@@ -281,7 +282,8 @@ public class RuleSequencesGraTraImpl extends GraTra {
 	protected boolean apply(final List<Pair<Rule, String>> group, final String iters) {
 		if (iters.equals("*")) {
 //			System.out.println("\n	apply  *  times");
-			this.appliedOnce = true;			
+			this.appliedOnce = true;	
+			int i = 0;		
 			while (this.appliedOnce && !this.stopping) {
 				this.appliedOnce = false;
 				long time0 = System.currentTimeMillis();
@@ -297,9 +299,10 @@ public class RuleSequencesGraTraImpl extends GraTra {
 
 				} 
 				this.time = this.time + (System.currentTimeMillis()-time0);
-				System.out.println("used time: "+time+"ms");
+				System.out.println("used time: "+time+"ms"+" iteration = "+i);
 				if (this.os != null)
 					writeUsedTimeToProtocol("used time: ", time);
+				i++;
 			}
 		} else {
 			
@@ -321,7 +324,7 @@ public class RuleSequencesGraTraImpl extends GraTra {
 					}
 				}
 				this.time = this.time + (System.currentTimeMillis()-time0);
-				System.out.println("used time: "+time+"ms"); //+"       ###  "+this.hostgraph.getNodesCount());
+				System.out.println("used time: "+time+"ms"+" iteration = "+i);; //+"       ###  "+this.hostgraph.getNodesCount());
 				if (this.os != null) 
 					writeUsedTimeToProtocol("used time: ", time);
 			}
