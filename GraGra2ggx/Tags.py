@@ -75,6 +75,7 @@ class RuleTags:
         self.LHS = GraphTags("Left","LHS", LHS)
         self.RHS = GraphTags("Right","RHS", RHS)
         self.NAC = []
+        self.parameters = {}
     
     def add_NAC(self,name,Graph):
         """
@@ -84,6 +85,14 @@ class RuleTags:
                 Graph : networkx 
         """
         self.NAC.append(GraphTags(name, "NAC", Graph))
+    
+    def add_parameter(self,parameter,type_):
+        """Adds the parameters to the rules"""
+        self.parameters[parameter] = type_
+    
+    def get_parameters(self):
+        """retruns all the Parameters"""
+        return self.parameters
         
     def getLHS(self): 
         """

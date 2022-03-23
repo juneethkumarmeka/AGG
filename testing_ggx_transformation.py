@@ -11,8 +11,8 @@ from LoadGGX import LoadGGX
 from Networkx2Verilog import Networkx2Verilog
 import GraGra2ggx.GraGra2ggx
 
-LoadGGX("TEST_4.ggx")()
-g1 = GGX2Networkx("TEST_4_out.ggx")
-graph = g1.getGraph()
-print("The no. of nodes = "+str(len(graph.nodes)))
-Networkx2Verilog(graph,"test", "TEST_VERILOG.v", mode = "w")
+LoadGGX("RippleCarryAdder.ggx")()
+# g1 = GGX2Networkx("TEST_4_out.ggx")
+# graph = g1.getGraph()
+# print("The no. of nodes = "+str(len(graph.nodes)))
+# Networkx2Verilog(graph,"test", "TEST_VERILOG.v", mode = "w")

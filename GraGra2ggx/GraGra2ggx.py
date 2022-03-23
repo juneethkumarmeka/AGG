@@ -190,6 +190,8 @@ class GraGra2ggxWriter:
         ruleName = ruleTag.getName()
         ruleID = self.ID()
         rulewriterTag = CreateTag("Rule",Parent.getTag(), ID = ruleID,formula = "true",name = ruleName)
+        for eachparameter in ruleTag.get_parameters():
+            CreateTag("Parameter",rulewriterTag.getTag(),name = eachparameter,type = ruleTag.get_parameters()[eachparameter])
         self.graphwriter(ruleTag.getLHS(),rulewriterTag)
         self.graphwriter(ruleTag.getRHS(),rulewriterTag)
         LeftGraph = ruleTag.getLHS().getGraph()
@@ -339,13 +341,13 @@ class GraGra2ggxWriter:
 
 # Rule1_Left.add_node("a",type = "IN")
 # Rule1_Right.add_node("a",type = "IN")
-# Rule1_Right.add_node("b",type = "NT",gateType = "And")
+# Rule1_Right.add_node("b",type = "NT",gateType = ["gate","var"])
 # Rule1_Right.add_edge("a","b")
 # Rule1_NAC.add_node("a", type = "IN")
-# Rule1_NAC.add_node("b", type = "NT",gateType = "Or")
+# Rule1_NAC.add_node("b", type = "NT",gateType = ["gate","var"])
 # Rule1_NAC.add_edge("a","b")
 # Rule1_NAC1.add_node("a", type = "IN")
-# Rule1_NAC1.add_node("c", type = "NT",gateType = "Xor")
+# Rule1_NAC1.add_node("c", type = "NT",gateType = ["gate","var"])
 # Rule1_NAC1.add_edge("a","c")
 
 
@@ -353,6 +355,7 @@ class GraGra2ggxWriter:
 # Rule1 = RuleTags("Rule1",Rule1_Left,Rule1_Right)
 # Rule1.add_NAC("NAC1",Rule1_NAC)
 # Rule1.add_NAC("NAC2",Rule1_NAC1)
+# Rule1.add_parameter("gate", "String")
 # Rule2 = RuleTags("Rule2",Rule1_Left,Rule1_Right)
 # Rule2.add_NAC("NAC1",Rule1_NAC)
 # Rule2.add_NAC("NAC2",Rule1_NAC1)
