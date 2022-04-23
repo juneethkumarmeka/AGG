@@ -417,25 +417,32 @@ class LevelBasedGenerator:
         Sub1 = SubsequenceTag()
         Sub1.addRule("INPUT_GEN", "1")
         Seq1.addSubSequence(Sub1, "{}".format(inputs))
+        
+        
         Sub2 = SubsequenceTag()
         Sub2.addRule("2_IN_Z", "*")
         Sub2.addRule("2_IN_Z_NZ", "*")
         Sub2.addRule("2_IN_NZ_NZ", "{}".format(additional_gatesinLevel_1))
         Sub2.addRule("Delete_NZ_IN", "*")
         Seq1.addSubSequence(Sub2, "1")
+        
+        Sub6 = SubsequenceTag()
+        for i,each in enumerate(allowed_internal_gates):
+            Sub6.addRule("{}_Assign".format(each.capitalize()), "{}".format(internal_gates_ratio[i]))
+        Seq1.addSubSequence(Sub6, "*")   
+        
+        
+        
         Sub3 = SubsequenceTag()
         Sub3.addRule("2_NT_Z", "*")
         Sub3.addRule("2_NT_Z_NZ", "*")
         Sub3.addRule("2_NT_NZ_NZ", "{}".format(additional_gatesinLevel))
         Sub3.addRule("Delete_NZ", "*")
         Sub3.addRule("R_Replace", "*")
-        Seq1.addSubSequence(Sub3, "{}".format(levels-1))
         
-        Sub6 = SubsequenceTag()
-        for i,each in enumerate(allowed_internal_gates):
-            Sub6.addRule("{}_Assign".format(each.capitalize()), "{}".format(internal_gates_ratio[i]))
-            
-        Seq1.addSubSequence(Sub6, "*")
+        for i in range(levels-1):
+            Seq1.addSubSequence(Sub3, "{}".format(1))
+            Seq1.addSubSequence(Sub6, "*")
         
         Sub4 = SubsequenceTag()
         Sub4.addRule("2_NT_Z", "*")
@@ -467,6 +474,6 @@ class LevelBasedGenerator:
 # LevelBasedGenerator(20, 200, 25, 8 , 
 #                     ['and',"xor","xnor","nand","nor","or"], [1,1,1,1,1,1],
 #                     ['and',"xor","xnor","nand","nor","or"],[1,1,1,1,1,1], 
-#                     "Test", "Tkest.v")()
+#                     "Test", "Tkest1.v")()
 #-----------------------------------------------------------------------------#
 
