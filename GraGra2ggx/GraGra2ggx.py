@@ -201,6 +201,9 @@ class GraGra2ggxWriter:
             try:
                 if LeftGraph.nodes[eachnode] == RightGraph.nodes[eachnode]:
                     Morphism.append(eachnode)
+                    
+                elif eachnode in RightGraph.nodes:
+                    Morphism.append(eachnode)
             except : pass
         # ruleMorph = ruleName+"Morphism"
         
