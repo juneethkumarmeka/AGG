@@ -40,7 +40,7 @@ class Networkx2Verilog:
         
     def processing(self):
         for eachnode in self.graph.nodes:
-            print(self.graph.nodes[eachnode]["type"])
+            # print(self.graph.nodes[eachnode]["type"])
             self.instances[eachnode] = Instance(eachnode,self.graph.nodes[eachnode]["type"])
             for each in self.graph.successors(eachnode):
                 self.instances[eachnode].add_fanout(each)
@@ -82,6 +82,8 @@ class Networkx2Verilog:
         for each in self.instace_string:
             fp.write(each)
         fp.write("endmodule\n\n\n")
+        fp.close()
+        print("Done with writing")
        
             
             
