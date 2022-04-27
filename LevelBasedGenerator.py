@@ -471,9 +471,13 @@ class LevelBasedGenerator:
 
 #Testing
 #-----------------------------------------------------------------------------#
-# LevelBasedGenerator(20, 200, 25, 8 , 
+# import time
+# start = time.time()
+# LevelBasedGenerator(750, 3000000, 1000, 1000, 
 #                     ['and',"xor","xnor","nand","nor","or"], [1,1,1,1,1,1],
 #                     ['and',"xor","xnor","nand","nor","or"],[1,1,1,1,1,1], 
 #                     "Test", "Tkest1.v")()
+# end = time.time()
+# print(end-start)
 #-----------------------------------------------------------------------------#
 
