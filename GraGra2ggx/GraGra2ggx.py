@@ -152,6 +152,11 @@ class GraGra2ggxWriter:
                         type_val = type(val).__name__
                         if type_val == "str":
                             type_val = "string"
+                            
+                        if type_val == "bool":
+                            type_val = "boolean"
+                            val = str(val).lower()
+                            
                         attr_id = self.Tags["NodeType"][node_type][attr].getattribute("ID")
                         if nature == "const":
                             attrTag = CreateTag("Attribute",nodeTag.getTag(),constant = "true",type = attr_id)
@@ -160,7 +165,7 @@ class GraGra2ggxWriter:
                             
                         valueTag = CreateTag("Value",attrTag.getTag())
                         typeTag = CreateTag(type_val, valueTag.getTag())
-                        CreateText(str(val), typeTag.getTag())
+                        CreateText(str(val).lower(), typeTag.getTag())
                     
                         
             except: raise Exception("{} Node type is not defined".format(node_type))
