@@ -1,0 +1,274 @@
+module : Level Based Genearator  { 
+    
+    define IN;
+    define Marker R;
+    define Marker Z;
+    define Marker NZ;
+    define IGNORE NT;
+    define AND;
+    define OR;
+    define NAND;
+    define NOR;
+    define XOR;
+    define XNOR;
+    
+    
+    Rule : "INPUT_GEN" {
+        LHS {}
+        RHS {
+            IN U1;
+            Marker Z U2(U1);
+        }
+    
+    }
+    
+    Rule : "2_IN_Z" {
+        LHS {
+            IN U1;
+            IN U2;
+            Marker Z U3(U1);
+            Marker Z U4(U2);
+        }
+        RHS {
+            IN U1;
+            IN U2;
+            IGNORE NT U5;
+            Marker Z U6(U5);
+            Marker NZ U7(U1);
+            Marker NZ U8(U8);
+        }
+    
+    }
+    
+    
+    Rule : "2_IN_Z_NZ" {
+        LHS {
+            IN U1;
+            IN U2;
+            Marker Z U3(U1);
+            Marker NZ U4(U2);
+        }
+        RHS {
+            IN U1;
+            IN U2;
+            IGNORE NT U5;
+            Marker Z U6(U5);
+            Marker NZ U7(U1);
+            Marker NZ U8(U8);
+        }
+    
+    }
+    
+    Rule : "2_IN_NZ_NZ" {
+        LHS {
+            IN U1;
+            IN U2;
+            Marker NZ U3(U1);
+            Marker NZ U4(U2);
+        }
+        RHS {
+            IN U1;
+            IN U2;
+            IGNORE NT U5;
+            Marker Z U6(U5);
+            Marker NZ U7(U1);
+            Marker NZ U8(U8);
+        }
+    
+    }
+    
+    Rule : "2_NT_Z" {
+        LHS {
+            IGNORE NT U1;
+            IGNORE NT U2;
+            Marker Z U3(U1);
+            Marker Z U4(U2);
+        }
+        RHS {
+            IGNORE NT U1;
+            IGNORE NT U2;
+            IGNORE NT U5;
+            Marker R U6(U5);
+            Marker NZ U7(U1);
+            Marker NZ U8(U8);
+        }
+    
+    }
+    
+    
+    Rule : "2_NT_Z_NZ" {
+        LHS {
+            IGNORE NT U1;
+            IGNORE NT U2;
+            Marker Z U3(U1);
+            Marker NZ U4(U2);
+        }
+        RHS {
+            IGNORE NT U1;
+            IGNORE NT U2;
+            IGNORE NT U5;
+            Marker R U6(U5);
+            Marker NZ U7(U1);
+            Marker NZ U8(U8);
+        }
+    
+    }
+    
+    
+    Rule : "2_NT_NZ_NZ" {
+        LHS {
+            IGNORE NT U1;
+            IGNORE NT U2;
+            Marker NZ U3(U1);
+            Marker NZ U4(U2);
+        }
+        RHS {
+            IGNORE NT U1;
+            IGNORE NT U2;
+            IGNORE NT U5;
+            Marker R U6(U5);
+            Marker NZ U7(U1);
+            Marker NZ U8(U8);
+        }
+    
+    }
+    
+    Rule : "R_Replace" {
+        LHS {
+            IGNORE NT U1;
+            Marker R U3(U1);
+        }
+        RHS {
+            IGNORE NT U1;
+            Marker Z U8(U1);
+        }
+    
+    }
+    
+    Rule : "Delete_NZ" {
+        LHS {
+            IGNORE NT U1;
+            Marker NZ U3(U1);
+        }
+        RHS {
+            IGNORE NT U1;
+        }
+    
+    }
+    
+    Rule : "Delete_NZ_IN" {
+        LHS {
+            IN U1;
+            Marker NZ U3(U1);
+        }
+        RHS {
+            IN U1;
+        }
+    }
+    
+    Rule : "Assign_AND" {
+        LHS {
+            IGNORE NT U1;
+        }
+        RHS {
+             AND U2;
+        }
+    
+    }
+    
+    Rule : "Assign_NAND" {
+        LHS {
+            IGNORE NT U1;
+        }
+        RHS {
+             NAND U2;
+        }
+    
+    }
+    
+    
+    Rule : "Assign_OR" {
+        LHS {
+            IGNORE NT U1;
+        }
+        RHS {
+             OR U2;
+        }
+    
+    }
+    
+    Rule : "Assign_XOR" {
+        LHS {
+            IGNORE NT U1;
+        }
+        RHS {
+             XOR U2;
+        }
+    
+    }
+    
+    Rule : "Assign_XNOR" {
+        LHS {
+            IGNORE NT U1;
+        }
+        RHS {
+             XNOR U2;
+        }
+    
+    }
+    Rule : "Assign_NOR" {
+        LHS {
+            IGNORE NT U1;
+        }
+        RHS {
+             NOR U2;
+        }
+    
+    }
+    
+    
+    
+    
+    
+    RuleSequence : "RuleSequence" {
+        Subsequence : 1 {
+            "INPUT_GEN" : 200;
+        }
+        Subsequence : 1 {
+            "2_IN_Z" : *;
+            "2_IN_Z_NZ" : *;
+            "2_IN_NZ_NZ" : 500;
+            "Dele_NZ_IN" : *;
+            
+        }
+        
+        Subsequence : 10 {
+            "2_NT_Z" : *;
+            "2_NT_Z_NZ" : *;
+            "2_NT_NZ_NZ" : 500;
+            "Delete_NZ" : *;
+            "R_Replace" : *;
+            
+        }
+        Subsequence : 1 {
+            "2_NT_Z" : *;
+            "2_NT_Z_NZ" : *;
+            "2_NT_NZ_NZ" : 100;
+            "Delete_NZ" : *;
+            "R_Replace" : *;
+            
+        }
+        Subsequence : * {
+            "Assign_AND" : 1
+            "Assign_XNOR" : 1
+            "Assign_XOR" : 1
+            "Assign_OR" : 1
+            "Assign_NOR" : 1
+            "Assign_NAND" : 1
+        }
+        
+    }
+    
+}
+
+

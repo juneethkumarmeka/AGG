@@ -1,0 +1,231 @@
+module : Memory  { # module is the Key word and RippleCarry Adder 
+                               is the name of the Circuit
+    define IGNORE BIT[bit : int];
+    define DECODER(in: IN[bit : int],in: EN,out : OUT1[string : String,val :int],out : OUT2[string : String,val :int]);
+    define Marker R;
+    define Marker J;
+    define RAM(in: READ_BUS, in: WRITE_BUS,in: OUTR[val:int],in : OUTC[val:int]);
+    define IGNORE ADDRESS[rowno : int,colno : int];
+    
+    
+    
+    Rule : "Bit" {
+    
+        LHS {}
+    
+        RHS {
+            IGNORE BIT U1[bit : 0];
+        }
+    }
+    
+    Rule : "DecoderRule" {
+        int bit;
+        String string1;
+        String string2; 
+    
+        LHS {
+            DECODER U1(N1[bit:bit],N2,N3[String:string1],N4[String:string2]);
+            Marker R U2(N3);
+            Marker R U3(N4);
+            IGNORE BIT U4[bit:bit];
+        }
+        
+        RHS {
+            DECODER U1(N1[bit:bit],N2,N3[String:string1],N4[String:string2]);
+            IGNORE BIT U4[bit:bit];
+            DECODER U5(N6[bit:bit+1],N3,N7[String:string1+"0"],N8[String:string1+"1"]);
+            DECODER U6(N9[bit:bit+1],N4,N10[String:string1+"0"],N11[String:string1+"1"]);
+            Marker J U8(N7);
+            Marker J U8(N8);
+            Marker J U8(N10);
+            Marker J U8(N11);    
+        }
+    
+    
+    }
+    
+    Rule : "Bit++"{
+        int bit; 
+        LHS {
+            IGNORE BIT U1[bit:bit];
+        }
+        RHS {
+            IGNORE BIT U1[bit:bit+1];
+        }
+    }
+    
+    Rule : "J2R" {
+        LHS {
+            Decoder:Out1 U1;
+            Marker J U2(U1);
+            Decoder:Out2 U3;
+            Marker J U4(U3); 
+        }
+        RHS {
+            Decoder:Out1 U1;
+            Marker R U2(U1);
+            Decoder:Out2 U3;
+            Marker R U4(U3); 
+        }
+        
+        
+    }
+    
+    Rule : "StartDecode"{
+        int bit;
+        
+        LHS{
+            IGNORE BIT U1[bit:bit]
+        }
+        RHS{
+            IGNORE BIT U1[bit:bit]
+            DECODER U2 (N1[bit:bit],N2,N3[string:"0"],N4[string:"1"]);
+            Marker R U3(N3);
+            Marker R U4(N4);
+        }
+    }
+    
+    Rule : "DeleteRR"{
+        String string1;
+        String string2;
+        LHS {
+            
+            DECODER:OUT1 U1[string:string1];
+            DECODER:OUT2 U2[string:string2];
+            Marker R U3(U2);
+            Marker R U4(U1);
+            
+        }
+        
+        RHS {
+            DECODER:OUT1 U1[val:Integer.parseInt(string1,2)];
+            DECODER:OUT2 U2[val:Integer.parseInt(string2,2)];
+            RAM:OUTR U4[val:Integer.parseInt(string1,2)]
+            RAM:OUTR U5[val:Integer.parseInt(string2,2)]
+            connect U1 U4;
+            connect U2 U5; # connect is the key word to connect 2 ports if the instances are not declared
+        }
+    
+    }
+    
+    Rule : "DeleteRC"{
+        String string1;
+        String string2;
+        LHS {
+            
+            DECODER:OUT1 U1[string:string1];
+            DECODER:OUT2 U2[string:string2];
+            Marker R U3(U2);
+            Marker R U4(U1);
+            
+        }
+        
+        RHS {
+            DECODER:OUT1 U1[val:Integer.parseInt(string1,2)];
+            DECODER:OUT2 U2[val:Integer.parseInt(string2,2)];
+            RAM:OUTC U4[val:Integer.parseInt(string1,2)]
+            RAM:OUTC U5[val:Integer.parseInt(string2,2)]
+            connect U1 U4;
+            connect U2 U5;
+        }
+    
+    }
+    
+    Rule : "DeleteBit"{
+        LHS {
+            BIT U1;
+            
+        }
+        RHS {}
+    }
+    
+    Rule : "ADDRESS_INIT"{
+        LHS {}
+        RHS {
+            IGNORE ADDRESS U1[rowno : 0,colno :0];
+            RAM:READ_BUS U2;
+            RAM:WRITE_BUS U3;
+        }
+        
+    }
+    
+    Rule : "ROW++" {
+        int r;
+        int c; 
+        LHS {
+            IGNORE ADDRESS U1[rowno : r,colno :c];
+            RAM:READ_BUS U2;
+            RAM:WRITE_BUS U3;
+            RAM:OUTC U4[val:c];
+            RAM:OUTR U5[val:r];
+            
+        }
+    
+        RHS {
+            IGNORE ADDRESS U1[rowno : r+1,colno :c];
+            RAM U5(U2,U3,U4[val:c],U5[val:r]);
+        }
+    
+    }
+    
+    Rule : "COL++" {
+        int r;
+        int c;
+        LHS {
+            IGNORE ADDRESS U1[rowno : r,colno :c];
+        }
+        
+        RHS {
+            IGNORE ADDRESS U1[rowno : 0,colno :c+1];
+        }
+    }
+    
+    RuleSequence : "MEMORYLAYOUT" {
+        Subsequence : 1 {
+            "Bit" : 1;
+            "StartDecode" : 1
+        }
+        
+        Subsequence : 2 {
+            "DecoderRule": *;
+            "J2R" : *;
+            "Bit++" : 1;
+            
+        }
+        
+        Subsequence: 1 {
+            "DeleteRR" : *;
+            "DeleteBit" : 1;
+        }
+        
+        Subsequence : 1 {
+            "Bit" : 1;
+            "StartDecode" : 1
+        
+        }
+        Subsequence : 2 {
+            "DecoderRule" : *;
+            "J2R" : *;
+            "Bit++" : 1;
+        }
+        Subsequence : 1 {
+            "DeleteRC" : *;
+            "DeleteBit" :1
+        }
+        
+        Subsequence : 1 {
+            "ADDRESS_INIT" : 1   
+        }
+        
+        Subsequence : 8 {
+            "ROW++" : *;
+            "COL++" : 1;
+        }
+        
+        
+    }
+    
+    
+}
+
+

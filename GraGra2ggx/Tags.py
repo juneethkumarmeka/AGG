@@ -76,6 +76,7 @@ class RuleTags:
         self.RHS = GraphTags("Right","RHS", RHS)
         self.NAC = []
         self.parameters = {}
+        self.AC = []
     
     def add_NAC(self,name,Graph):
         """
@@ -89,6 +90,16 @@ class RuleTags:
     def add_parameter(self,parameter,type_):
         """Adds the parameters to the rules"""
         self.parameters[parameter] = type_
+        
+    def add_attrcondition(self,expression,conditionoperator,value):
+        """
+            adds the conditions to the attribute values 
+            inputs : expression, conditionoperator,value 
+                ex : SL-TL,>,2
+        """
+        condition = "{}{}{}".format(expression,conditionoperator,value)
+        self.AC.append(condition)
+        
     
     def get_parameters(self):
         """retruns all the Parameters"""
@@ -114,6 +125,14 @@ class RuleTags:
             Returns the name of the rule 
         """
         return self.name
+    
+    def get_attrconditions(self):
+        """
+            Returns the attribute conditions 
+        """
+        return self.AC
+    
+    
     
     
 class SubsequenceTag:

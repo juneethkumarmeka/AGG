@@ -1,0 +1,153 @@
+module LevelBasedGenerator {
+	# ZF -> zero fanout 
+	# GT -> Gate Type 
+	# CL -> Current level 
+	# NL -> Next Level 
+	# GS -> Gate Assignment Status 
+	
+	define INPUT[ZF : boolean ](OUT1 : out );
+	define NT[GT : String , ZF : boolean , GS : boolean , CL : boolean ,NL : boolean ] (IN1 : in , IN2 : in , OUT1 : out );
+	rule Input_Init {
+		sub {}
+		add U1 INPUT[ZF <- true ]();
+	}
+	rule IN_Z_Z {
+		sub {
+			U1 INPUT[ZF <- true ]();
+			U2 INPUT[ZF <- true ]();
+		}
+		add U3 NT[ZF <- true , GS <- false , CL <- false , NL <- true ](IN1 = U1.OUT1, IN2 = U2.OUT2 );
+		U1[ZF <- false ];
+		U2[Zf <- false ];
+	}
+	
+	rule IN_Z_NZ {
+		sub {
+			U1 INPUT[ZF <- true ]();
+			U2 INPUT[ZF <- false]();
+		}
+		add U3 NT[ZF <- true , GS <- false , CL <- false , NL <- true ](IN1 = U1.OUT1, IN2 = U2.OUT2 );
+		U1[ZF <- false ];
+		U2[Zf <- false ];
+	}
+	
+	rule IN_NZ_NZ {
+		sub {
+			U1 INPUT[ZF <- false ]();
+			U2 INPUT[ZF <- false ]();
+		}
+		add U3 NT[ZF <- true , GS <- false , CL <- false , NL <- true ](IN1 = U1.OUT1, IN2 = U2.OUT2 );
+		U1[ZF <- false ];
+		U2[Zf <- false ];
+	}
+	
+	rule NT_Z_Z {
+		sub {
+			U1 NT[ZF <- true ,CL <- true , NL <- false ]();
+			U2 NT[ZF <- true ,CL <- true , NL <- false ]();
+		}
+		add U3 NT[ZF <- true , GS <- false , CL <- false , NL <- true ](IN1 = U1.OUT1, IN2 = U2.OUT2 );
+		U1[ZF <- false ];
+		U2[Zf <- false ];
+	}
+	
+	rule NT_Z_NZ {
+		sub {
+			U1 NT[ZF <- true ,CL <- true , NL <- false ]();
+			U2 NT[ZF <- false ,CL <- true , NL <- false ]();
+		}
+		add U3 NT[ZF <- true , GS <- false , CL <- false , NL <- true ](IN1 = U1.OUT1, IN2 = U2.OUT2 );
+		U1[ZF <- false ];
+		U2[Zf <- false ];
+	}
+	
+	rule NT_NZ_NZ {
+		sub {
+			U1 NT[ZF <- false ,CL <- true , NL <- false ]();
+			U2 NT[ZF <- false ,CL <- true , NL <- false ]();
+		}
+		add U3 NT[ZF <- true , GS <- false , CL <- false , NL <- true ](IN1 = U1.OUT1, IN2 = U2.OUT2 );
+		U1[ZF <- false ];
+		U2[Zf <- false ];
+	}
+	
+	rule Assign_And {
+		sub {
+			U1 NT[GS <- false ]();
+		}
+		U1[GS <- true , GT = "and" ];
+	}
+	
+	rule Assign_Or {
+		sub {
+			U1 NT[GS <- false ]();
+		}
+		U1[GS <- true , GT = "or" ];
+	}
+	
+	rule Assign_Xor {
+		sub {
+			U1 NT[GS <- false ]();
+		}
+		U1[GS <- true , GT = "xor" ];
+	}
+	
+	rule Assign_Xnor {
+		sub {
+			U1 NT[GS <- false ]();
+		}
+		U1[GS <- true , GT = "xnor" ];
+	}
+	
+	rule Assign_Nand {
+		sub {
+			U1 NT[GS <- false ]();
+		}
+		U1[GS <- true , GT = "nand" ];
+	}
+	
+	rule Assign_Nor {
+		sub {
+			U1 NT[GS <- false ]();
+		}
+		U1[GS <- true , GT = "nor" ];
+	}
+	
+	rule Change_Level {
+		sub {
+			U1 NT[ZF <- true ,CL <- false , NL <- true ]();
+		}
+		U1[CL <- true , NL <- false ];
+	}
+	
+	rulesequence {
+		subsequence : 1 {
+			Input_Init : 20;  
+			IN_Z_Z : * ; 
+			IN_Z_NZ : *;
+			IN_NZ_NZ : 5;
+		}
+		subsequence : 2 {
+			NT_Z_Z : * ;
+			NT_Z_NZ : * ;
+			NT_NZ_NZ : 5;
+			Change_Level : *; 
+		}
+		subsequence : * {
+			Assign_And : 1;
+			Assign_Or : 1;
+			Assign_Nor : 1;
+			Assign_Nand : 1;
+			Assign_Xor : 1;
+			Assign_Xnor : 1;
+		}
+		
+	} 
+	
+	
+	
+	
+	
+	
+	
+}

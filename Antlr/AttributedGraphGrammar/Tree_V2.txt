@@ -1,0 +1,33 @@
+module AndTree {
+	define AND[connected : boolean , CL : boolean , NL : boolean ](IN1 : in , IN2  : in , OUT1 : out );
+	rule AND_Init {
+		sub {}
+		add U1 AND(connected <- false , CL <- true , NL <- false )(); 
+	
+	}
+	
+	rule Main_Rule {
+		sub {
+			U1 AND(connected <- false , CL <- true , NL <- false )(); 
+			U2 AND(connected <- false , CL <- true , NL <- false )(); 
+		}
+		add U3 AND(connected <- false , CL <- false , NL <- true )(IN1 = U1.OUT1 , IN2 = U2.OUT1); 
+	}
+	
+	rule Change_Level {
+		sub {
+			U1 AND(connected <- false , CL <- false , NL <- true )(); 
+		}
+		U1[CL <- true , NL <- false ];
+	}
+	rulesequence {
+		subsequence : 8 {
+			AND_Init : 1;
+		}
+		subsequence : * {
+			Main_Rule : *;
+			Change_Level : *;
+		}
+	
+	}
+}

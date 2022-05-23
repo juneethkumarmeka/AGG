@@ -1,0 +1,36 @@
+module RippleCarryAdder {
+    define ADDER [ bit : int , current_bit: boolean ] (  A : in , B : in , Cin : in , Sum : in , Cout : out );
+    define INPUT [ bit : int ] (input_port : out );
+	 define OUTPUT [ bit : int ] ( output_port : out );
+    
+    rule Initialization {
+        sub {
+                U1 INPUT [ bit <- bit1];
+                U2 INPUT [ bit <- bit1];
+                U4 OUTPUT [ bit <- bit1];
+                U3 ADDER[ bit <- bit1, current_bit <- binstr2int(string) ] (A = U1.input_port,B = U2.input_port,
+															  Sum = U4.output_port );
+        }
+        
+        U3[current_bit <- false];
+        U3[current_bit <- false];
+        add U1 Input [bit <- 0,CL <- true];
+        add U1 Input [bit <- 0,CL <- true];
+        del U2 Input [bit <- 0];
+        del U2 Input [bit <- 0];
+        
+        }
+        
+    rulesequence {     
+        subsequence : 1 {                                       
+            Initialization : 1;
+            Main_Rule : 10;
+            Termination : 1;                                     
+        }
+    }
+        
+    
+
+
+}
+

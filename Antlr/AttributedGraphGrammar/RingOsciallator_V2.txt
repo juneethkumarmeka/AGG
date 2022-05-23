@@ -1,0 +1,23 @@
+module RingOscillator {
+	define NOT [start : boolean , next : boolean ](IN1 : in , OUT1 : out);
+	rule Start {
+		sub {}
+		add U1 NOT[start <- true , next <- true]();
+	}
+	rule Main_Rule {
+		sub {
+			U1 NOT[next <- true ]();
+		}
+		add U2 NOT[start <- false , next <- true ](IN1 = U1.OUT1);
+		U1[next <- false ];
+	}
+	rule Feedback {
+		sub {
+			U1 NOT[next <- true ]();
+			U2 NOT[start <- true ]();
+		}
+		add U2(IN1 = U1.OUT1);
+		
+	}
+	
+}

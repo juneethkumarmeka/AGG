@@ -6,6 +6,12 @@ Project Name : Graph Grammar Attribute Benchmark Generator
 
 #Modules
 #-----------------------------------------------------------------------------#
+# from TagCreator import xml_writer
+# from TagCreator import CreateTag
+# from TagCreator import CreateText
+# from TagCreator import WriteTaggedValue
+# import networkx as nx
+# from Tags import GraphTags
 from GraGra2ggx.TagCreator import xml_writer
 from GraGra2ggx.TagCreator import CreateTag
 from GraGra2ggx.TagCreator import CreateText
@@ -213,30 +219,43 @@ class GraGra2ggxWriter:
             rightImage = ruleTag.getRHS().getID(each)
             CreateTag("Mapping", rulewriterMorphTag.getTag(),image = rightImage,orig =leftOriginal)
         
-        
-        if len(ruleTag.getNAC())>0:
-            # ACTag = "{}AC".format(ruleName)
+        if len(ruleTag.getNAC()) >0 or len(ruleTag.get_attrconditions()) >0 :
             rulewriterACTag = CreateTag("ApplCondition", rulewriterTag.getTag())
-            for eachNACTag in ruleTag.getNAC():
-                Morphism = []
-                # NACName =  eachNACTag.getName()
-                # NACTag = "{}{}".format(ruleName,NACName)
-                rulewriterNACTag = CreateTag("NAC", rulewriterACTag.getTag())
-                self.graphwriter(eachNACTag,rulewriterNACTag)
-                NACGraph = eachNACTag.getGraph()
-                for eachnode in LeftGraph.nodes:
-                    try:
-                        if LeftGraph.nodes[eachnode] == NACGraph.nodes[eachnode]:
-                            Morphism.append(eachnode)
-                    except : pass
-                # nacMorph = ruleName+NACName
-                if len(Morphism) > 0:
-                    rulewriternacmorphTag = CreateTag("Morphism",rulewriterNACTag.getTag(),name = ruleName)
-                    for each in Morphism:
-                        leftOriginal = ruleTag.getLHS().getID(each)
-                        rightImage = eachNACTag.getID(each)
-                        CreateTag("Mapping", rulewriternacmorphTag.getTag(),image = rightImage,orig =leftOriginal)
+            if len(ruleTag.getNAC())>0:
+                for eachNACTag in ruleTag.getNAC():
+                    Morphism = []
+                    # NACName =  eachNACTag.getName()
+                    # NACTag = "{}{}".format(ruleName,NACName)
+                    rulewriterNACTag = CreateTag("NAC", rulewriterACTag.getTag())
+                    self.graphwriter(eachNACTag,rulewriterNACTag)
+                    NACGraph = eachNACTag.getGraph()
+                    for eachnode in LeftGraph.nodes:
+                        try:
+                            if LeftGraph.nodes[eachnode] == NACGraph.nodes[eachnode]:
+                                Morphism.append(eachnode)
+                        except : pass
+                    # nacMorph = ruleName+NACName
+                    if len(Morphism) > 0:
+                        rulewriternacmorphTag = CreateTag("Morphism",rulewriterNACTag.getTag(),name = ruleName)
+                        for each in Morphism:
+                            leftOriginal = ruleTag.getLHS().getID(each)
+                            rightImage = eachNACTag.getID(each)
+                            CreateTag("Mapping", rulewriternacmorphTag.getTag(),image = rightImage,orig =leftOriginal)
+            
+            if  len(ruleTag.get_attrconditions()) >0:
+                rulewriterAttrconditionTag = CreateTag("AttrCondition",rulewriterACTag.getTag())
+                for each in ruleTag.get_attrconditions():
+                    conditionTag = CreateTag("Condition",rulewriterAttrconditionTag.getTag())
+                    attrvalTag = CreateTag("Value",conditionTag.getTag())
+                    if type(each) == str:
+                        type_ = "string"
+                    else :
+                        type_ = type(each)
+                    attrtypeTag = CreateTag(type_,attrvalTag.getTag())
+                    CreateText(each,attrtypeTag.getTag())
+                    
                 
+            
         
         CreateTag("TaggedValue",rulewriterTag.getTag(),Tag = "layer",TagValue = "0")
         CreateTag("TaggedValue",rulewriterTag.getTag(),Tag = "Priority",TagValue = "0")
@@ -358,6 +377,9 @@ class GraGra2ggxWriter:
 # Rule1 = RuleTags("Rule1",Rule1_Left,Rule1_Right)
 # Rule1.add_NAC("NAC1",Rule1_NAC)
 # Rule1.add_NAC("NAC2",Rule1_NAC1)
+# Rule1.add_attrcondition("TL-SL", "<", "3")
+# Rule1.add_attrcondition("TL", "<", "3")
+# Rule1.get_attrconditions()
 # Rule1.add_parameter("gate", "String")
 # Rule2 = RuleTags("Rule2",Rule1_Left,Rule1_Right)
 # Rule2.add_NAC("NAC1",Rule1_NAC)

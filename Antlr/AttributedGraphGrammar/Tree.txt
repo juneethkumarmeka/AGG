@@ -1,0 +1,79 @@
+module : Tree  { 
+    
+    define IN;
+    define Marker R;
+    define Marker J;
+    define AND;
+    
+    
+    Rule : "INPUT_INIT" {
+        LHS {}
+        RHS {
+            IN U1;
+            Marker R U2(U1);
+        }
+    
+    }
+    
+    Rule : "INPUT_AND" {
+        LHS {
+            IN U1;
+            IN U2;
+            Marker R U3(U1);
+            Marker R U4(U2);
+        }
+        RHS {
+            IN U1;
+            IN U2;
+            AND U5;
+            Marker R U6(U5);
+        }
+    
+    }
+    Rule : "AND_AND" {
+        LHS {
+            AND U1;
+            AND U2;
+            Marker R U3(U1);
+            Marker R U4(U2);
+        }
+        RHS {
+            AND U1;
+            AND U2;
+            AND U5;
+            Marker J U6(U5);
+        }
+    
+    }
+    
+    Rule : "J2R" {
+        LHS {
+            AND U1;
+            Marker J U2(U1);
+        }
+        RHS {
+            AND U1;
+            Marker R U2(U1);
+        }
+        
+    
+    }
+    
+    
+    RuleSequence : "RuleSequence" {
+        Subsequence : 1 {
+            "INPUT_INIT" : 16
+        }
+        Subsequence : 1 {
+            "INPUT_AND" : 16
+        }
+        Subsequence : * {
+            "AND_AND" : *
+            "J2R" : *
+        }
+        
+    }
+    
+}
+
+

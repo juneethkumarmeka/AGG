@@ -1,0 +1,9 @@
+
+
+startgraph
+addnode 'N1',gate = 'and',level = 0;
+addnode 'N2',gate = 'or',level = 1; 
+//addnode 'N3',gate = 'or',level = 2; 
+addedge 'N1' 'N2'; 
+addedge 'N2' 'N4';
+endgraph
