@@ -142,63 +142,63 @@ class GraGra2ggxWriter:
             attributes = GraphTag.getGraph().nodes[eachnode].keys()
             try:
                 node_type_ID = self.Tags["NodeType"][node_type]["main"].getattribute("ID")
-                node_ID = self.ID()
-                GraphTag.addID(eachnode, node_ID)
-                nodeTag = CreateTag("Node",graphwriterTag.getTag(),ID = node_ID,type = node_type_ID)
-                for each in attributes :
-                    nature = "neutral"
-                    if each != "type":
-                        attr = each 
-                        try:
-                            print(GraphTag.getGraph().nodes[eachnode][each])
-                            type_attr = type(GraphTag.getGraph().nodes[eachnode][each]).__name__
-                            if type_attr == "bool" or type_attr == "int":
-                                nature = "const"
-                            if type_attr == "str":
-                                try:
-                                    Parameters[str(GraphTag.getGraph().nodes[eachnode][each])]
-                                    nature = "var"
-                                except : 
-                                    for key,values in Parameters.items():
-                                        if len(GraphTag.getGraph().nodes[eachnode][each].split(key)) > 1:
-                                            nature = "neutral"
-                                            break
-                                        else:
-                                            nature = "const"
-                            print("Nature = ",nature )    
-                            # print("Nature = variable")
-                            
-                        except:
-                            print(each,"Nature = constant")
-                            
-                        if type(GraphTag.getGraph().nodes[eachnode][each]) == list:
-                            val = GraphTag.getGraph().nodes[eachnode][each][0]
-                            # nature = GraphTag.getGraph().nodes[eachnode][each][1]
-                        else: 
-                            val = GraphTag.getGraph().nodes[eachnode][each]
-                            # nature = "const"
-                        print(nature)    
-                        type_val = type(val).__name__
-                        if type_val == "str":
-                            type_val = "string"
-                        if type_val == "bool":
-                            type_val = "boolean"
-                            val = str(val).lower()
-                            
+            except: raise Exception("{} Node type is not defined".format(node_type))
+            node_ID = self.ID()
+            GraphTag.addID(eachnode, node_ID)
+            nodeTag = CreateTag("Node",graphwriterTag.getTag(),ID = node_ID,type = node_type_ID)
+            for each in attributes :
+                nature = "neutral"
+                if each != "type":
+                    attr = each 
+                    try:
+                        type_attr = type(GraphTag.getGraph().nodes[eachnode][each]).__name__
+                        if type_attr == "bool" or type_attr == "int":
+                            nature = "const"
+                        if type_attr == "str":
+                            try:
+                                Parameters[str(GraphTag.getGraph().nodes[eachnode][each])]
+                                nature = "var"
+                            except : 
+                                for key,values in Parameters.items():
+                                    if len(GraphTag.getGraph().nodes[eachnode][each].split(key)) > 1:
+                                        nature = "neutral"
+                                        break
+                                    else:
+                                        nature = "const"
+                        
+                    except: nature = "const"
+                        
+                    if type(GraphTag.getGraph().nodes[eachnode][each]) == list:
+                        val = GraphTag.getGraph().nodes[eachnode][each][0]
+                        # nature = GraphTag.getGraph().nodes[eachnode][each][1]
+                    else: 
+                        val = GraphTag.getGraph().nodes[eachnode][each]
+                        # nature = "const"
+                    type_val = type(val).__name__
+                    if type_val == "str":
+                        type_val = "string"
+                    if type_val == "bool":
+                        type_val = "boolean"
+                        val = str(val).lower()
+                     
+                    try:
                         attr_id = self.Tags["NodeType"][node_type][attr].getattribute("ID")
-                        if nature == "const":
-                            attrTag = CreateTag("Attribute",nodeTag.getTag(),constant = "true",type = attr_id)
-                        elif nature == "var":
-                            attrTag = CreateTag("Attribute",nodeTag.getTag(),variable = "true",type = attr_id)
-                        else :
-                            attrTag = CreateTag("Attribute",nodeTag.getTag(),type = attr_id)
-                            
-                        valueTag = CreateTag("Value",attrTag.getTag())
-                        typeTag = CreateTag(type_val, valueTag.getTag())
-                        CreateText(str(val), typeTag.getTag())
+                    except: 
+                        raise Exception("The {} doesnot have any attribute named {} ".format(node_type,attr))
+                        
+                    if nature == "const":
+                        attrTag = CreateTag("Attribute",nodeTag.getTag(),constant = "true",type = attr_id)
+                    elif nature == "var":
+                        attrTag = CreateTag("Attribute",nodeTag.getTag(),variable = "true",type = attr_id)
+                    else :
+                        attrTag = CreateTag("Attribute",nodeTag.getTag(),type = attr_id)
+                        
+                    valueTag = CreateTag("Value",attrTag.getTag())
+                    typeTag = CreateTag(type_val, valueTag.getTag())
+                    CreateText(str(val), typeTag.getTag())
                     
                         
-            except: raise Exception("{} Node type is not defined".format(node_type))
+            
         
         # Adding the Edge Tag to the Graph Tag 
         for eachedge in GraphTag.getGraph().edges:
