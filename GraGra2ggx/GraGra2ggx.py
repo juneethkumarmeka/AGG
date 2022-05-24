@@ -262,6 +262,8 @@ class GraGra2ggxWriter:
                         try:
                             if LeftGraph.nodes[eachnode] == NACGraph.nodes[eachnode]:
                                 Morphism.append(eachnode)
+                            elif eachnode in NACGraph.nodes:
+                                Morphism.append(eachnode)
                         except : pass
                     # nacMorph = ruleName+NACName
                     if len(Morphism) > 0:
