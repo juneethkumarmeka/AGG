@@ -120,7 +120,7 @@ class GraGra2ggxWriter:
         self.ID = ID_Generation() # ID's Genertions Instatiation
     
     
-    def graphwriter(self,GraphTag,Parent):
+    def graphwriter(self,GraphTag,Parent,Parameters = []):
         """
             graphwriter Method converts the GraphTags to the ggx format and 
             writes to the file 
@@ -146,23 +146,52 @@ class GraGra2ggxWriter:
                 GraphTag.addID(eachnode, node_ID)
                 nodeTag = CreateTag("Node",graphwriterTag.getTag(),ID = node_ID,type = node_type_ID)
                 for each in attributes :
+                    nature = "neutral"
                     if each != "type":
                         attr = each 
+                        try:
+                            print(GraphTag.getGraph().nodes[eachnode][each])
+                            type_attr = type(GraphTag.getGraph().nodes[eachnode][each]).__name__
+                            if type_attr == "bool" or type_attr == "int":
+                                nature = "const"
+                            if type_attr == "str":
+                                try:
+                                    Parameters[str(GraphTag.getGraph().nodes[eachnode][each])]
+                                    nature = "var"
+                                except : 
+                                    for key,values in Parameters.items():
+                                        if len(GraphTag.getGraph().nodes[eachnode][each].split(key)) > 1:
+                                            nature = "neutral"
+                                            break
+                                        else:
+                                            nature = "const"
+                            print("Nature = ",nature )    
+                            # print("Nature = variable")
+                            
+                        except:
+                            print(each,"Nature = constant")
+                            
                         if type(GraphTag.getGraph().nodes[eachnode][each]) == list:
                             val = GraphTag.getGraph().nodes[eachnode][each][0]
-                            nature = GraphTag.getGraph().nodes[eachnode][each][1]
+                            # nature = GraphTag.getGraph().nodes[eachnode][each][1]
                         else: 
                             val = GraphTag.getGraph().nodes[eachnode][each]
-                            nature = "const"
-                            
+                            # nature = "const"
+                        print(nature)    
                         type_val = type(val).__name__
                         if type_val == "str":
                             type_val = "string"
+                        if type_val == "bool":
+                            type_val = "boolean"
+                            val = str(val).lower()
+                            
                         attr_id = self.Tags["NodeType"][node_type][attr].getattribute("ID")
                         if nature == "const":
                             attrTag = CreateTag("Attribute",nodeTag.getTag(),constant = "true",type = attr_id)
-                        else:
+                        elif nature == "var":
                             attrTag = CreateTag("Attribute",nodeTag.getTag(),variable = "true",type = attr_id)
+                        else :
+                            attrTag = CreateTag("Attribute",nodeTag.getTag(),type = attr_id)
                             
                         valueTag = CreateTag("Value",attrTag.getTag())
                         typeTag = CreateTag(type_val, valueTag.getTag())
@@ -198,8 +227,8 @@ class GraGra2ggxWriter:
         rulewriterTag = CreateTag("Rule",Parent.getTag(), ID = ruleID,formula = "true",name = ruleName)
         for eachparameter in ruleTag.get_parameters():
             CreateTag("Parameter",rulewriterTag.getTag(),name = eachparameter,type = ruleTag.get_parameters()[eachparameter])
-        self.graphwriter(ruleTag.getLHS(),rulewriterTag)
-        self.graphwriter(ruleTag.getRHS(),rulewriterTag)
+        self.graphwriter(ruleTag.getLHS(),rulewriterTag,ruleTag.get_parameters())
+        self.graphwriter(ruleTag.getRHS(),rulewriterTag,ruleTag.get_parameters())
         LeftGraph = ruleTag.getLHS().getGraph()
         RightGraph = ruleTag.getRHS().getGraph()
         Morphism = []
@@ -227,7 +256,7 @@ class GraGra2ggxWriter:
                     # NACName =  eachNACTag.getName()
                     # NACTag = "{}{}".format(ruleName,NACName)
                     rulewriterNACTag = CreateTag("NAC", rulewriterACTag.getTag())
-                    self.graphwriter(eachNACTag,rulewriterNACTag)
+                    self.graphwriter(eachNACTag,rulewriterNACTag,ruleTag.get_parameters())
                     NACGraph = eachNACTag.getGraph()
                     for eachnode in LeftGraph.nodes:
                         try:
