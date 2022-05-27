@@ -21,10 +21,11 @@ class Instance :
     def add_fanout(self,fanout): self.fanout.append(fanout)
     def get_fanin(self): return self.fanin
     def get_fanout(self): return self.fanout 
+    def change_type(self,val): self.type = val;
     
     
 class Networkx2Verilog:
-    def __init__(self,graph,modulename,filename,mode = 'w',inclusion_statements = []):
+    def __init__(self,graph,modulename,filename,mode = 'w',inclusion_statements = [],not_change_enable = False):
         self.graph = graph 
         self.filename = filename 
         self.inputs = []
@@ -36,7 +37,7 @@ class Networkx2Verilog:
         self.mode = mode
         self.inclusion_statements = inclusion_statements
         self.processing()
-        self.writing()
+        self.writing(not_change_enable)
         
     def processing(self):
         for eachnode in self.graph.nodes:
@@ -48,10 +49,13 @@ class Networkx2Verilog:
             for each in self.graph.predecessors(eachnode):
                 self.instances[eachnode].add_fanin(each)
                 
-    def writing(self):
+    def writing(self,not_change_enable):
         i = 0
         for eachnode in self.instances:
             each = self.instances[eachnode]
+            if not_change_enable:
+                if len(each.get_fanin()) == 1 and each.get_type() != "not":
+                    each.change_type("not")
             if len(each.get_fanout()) == 0 :
                 self.outputs.append(each.get_node())
             elif len(each.get_fanin()) == 0:

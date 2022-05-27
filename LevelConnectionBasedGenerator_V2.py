@@ -269,6 +269,7 @@ class LevelConnectionBasedGenerator:
         
         
         deletezerofanin = {}
+        deleteonefanin =    {}
         # Rule : Deletezerofanin_NT
         for key in kwargs["gatetypes"].keys():
             # Left Graph 
@@ -282,6 +283,16 @@ class LevelConnectionBasedGenerator:
                 right.add_node("U3",type = "tracker",level = "level")
                 deletezerofanin[rulename] = RuleTags(rulename,left,right)
                 G.addRule(deletezerofanin[rulename])
+            if key != "IN" and key != "not":
+                rulename = "{}_delonefanin".format(key)
+                left = nx.DiGraph()
+                left.add_node("U3",type = "tracker",level = "level")
+                left.add_node("U2",type = key,level = "level",fanin = 1)
+                # Right Graph 
+                right = nx.DiGraph()
+                right.add_node("U3",type = "tracker",level = "level")
+                deleteonefanin[rulename] = RuleTags(rulename,left,right)
+                G.addRule(deleteonefanin[rulename])
         
         
         # Rule : Deletezerofanout_IN
@@ -372,6 +383,8 @@ class LevelConnectionBasedGenerator:
         for eachgate in gates:
             if eachgate != "IN":
                 Sub4.addRule("{}_delzerofanin".format(eachgate), "*")
+                # if eachgate != "not":
+                #     Sub4.addRule("{}_delonefanin".format(eachgate), "*")
                 
         for eachgate in gates:
             if eachgate != "IN":
@@ -390,32 +403,32 @@ class LevelConnectionBasedGenerator:
         print("End Loading the ggx file")
         print("Writing the Verilog file")
         graph = GGX2Networkx("LevelConnectionBasedGenerator_out.ggx").getGraph()
-        Networkx2Verilog(graph, kwargs["modulename"], kwargs["verilogfilename"])
+        Networkx2Verilog(graph, kwargs["modulename"], kwargs["verilogfilename"],not_change_enable=True)
         print("End Writing the {} file".format(kwargs["verilogfilename"]))
         
 #-----------------------------------------------------------------------------#
 
 #Testing
 #-----------------------------------------------------------------------------#
-# import time
-# start = time.time()
-# LevelConnectionBasedGenerator(level_gen_mode = "uniform", 
-#                               levels = 100 , 
-#                               inputs = 100 , 
-#                               internal = 1000, 
-#                               outputs = 100, 
-#                               gatetypes = {"IN" :gate_info("IN"),
-#                                            "and" : gate_info("and"),
-#                                            "or" : gate_info("or"),
-#                                            "xor" : gate_info("xor"),
-#                                            "xnor" : gate_info("xnor"),
-#                                            "nand" : gate_info("nand"),
-#                                            "nor" : gate_info("nor"),
-#                                            "not" : gate_info("xor",fanin = 1)
-#                                            },
-#                               maxconndepth = 3, 
-#                               modulename = "Test", verilogfilename = "Tkest1.v")
-# end = time.time()
-# print(end-start)
+import time
+start = time.time()
+LevelConnectionBasedGenerator(level_gen_mode = "uniform", 
+                              levels = 10 , 
+                              inputs = 10 , 
+                              internal = 100, 
+                              outputs = 10, 
+                              gatetypes = {"IN" :gate_info("IN"),
+                                            "and" : gate_info("and"),
+                                            "or" : gate_info("or"),
+                                            "xor" : gate_info("xor"),
+                                            "xnor" : gate_info("xnor"),
+                                            "nand" : gate_info("nand"),
+                                            "nor" : gate_info("nor"),
+                                            "not" : gate_info("not",fanin = 1)
+                                            },
+                              maxconndepth = 3, 
+                              modulename = "Test", verilogfilename = "Tkest1.v")
+end = time.time()
+print(end-start)
 #-----------------------------------------------------------------------------#
 
