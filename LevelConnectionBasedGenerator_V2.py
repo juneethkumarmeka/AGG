@@ -384,13 +384,13 @@ class LevelConnectionBasedGenerator:
         Seq1.addSubSequence(Sub6, "1")
         G.addRuleSequence(Seq1)
         
-        # GraGra2ggxWriter("LevelConnectionBasedGenerator.ggx",G)()
+        GraGra2ggxWriter("LevelConnectionBasedGenerator.ggx",G)()
         print("Loading the ggx file ...")
         LoadGGX("LevelConnectionBasedGenerator.ggx")()
         print("End Loading the ggx file")
         print("Writing the Verilog file")
-        # graph = GGX2Networkx("LevelConnectionBasedGenerator_out.ggx").getGraph()
-        # Networkx2Verilog(graph, kwargs["modulename"], kwargs["verilogfilename"])
+        graph = GGX2Networkx("LevelConnectionBasedGenerator_out.ggx").getGraph()
+        Networkx2Verilog(graph, kwargs["modulename"], kwargs["verilogfilename"])
         print("End Writing the {} file".format(kwargs["verilogfilename"]))
         
 #-----------------------------------------------------------------------------#
