@@ -83,7 +83,7 @@ class Networkx2Verilog:
             fp.write(each)
         fp.write("endmodule\n\n\n")
         fp.close()
-        print("Done with writing")
+        print("Done with writing {}".format(self.filename))
        
             
             
