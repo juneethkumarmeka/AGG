@@ -1,12 +1,14 @@
 grammar AGL;
 
-start : 'module' modulename '{' data (data)*? rulesequence '}';
+start : 'module' modulename '{'(grammartype)? definerules (definerules)*? (mainrule)*? ruledelcaration (ruledelcaration)*? rulesequence '}';
 
-data : definerules
-     | ruledelcaration
-;
+grammartype : 'type' grammartypevalue ;
 
-
+grammartypevalue : 'Symmetric'
+            | 'symmetic'
+            | 'non-symmetic'
+            | 'Non-Symmetic';
+            
 definerules : DEFINE  nodetype '[' attributerules ']' portdeclaration semicolon
             | DEFINE  nodetype '[' attributerules ']' semicolon
             | DEFINE  nodetype portdeclaration semicolon
@@ -32,41 +34,81 @@ portdeclarationrule : ID COLON IN
                     | ID COLON OUT
 ;
 
+mainrule : mainrulename leftmainrulebrace instances rightmainrulebrace ;
 
-ruledelcaration : 'rule' rulename '{' ruledata '}';
+mainrulename : ID ; 
+
+ruledelcaration : 'rule' rulename leftrulebrace ruledata rightrulebrace;
 
 rulename : ID ; 
 
-ruledata : subgraph modifyingsubs;
+ruledata : subgraph modifyingsubs (applyingconditions)*?;
 
-subgraph : 'sub' '{' instances '}';
+applyingconditions : nac
+                   | ac;
 
-instances : (instance)*?;
+subgraph : 'sub' leftLHSbrace instances rightLHSbrace;
 
-instance : instancename instancetype instanceattributes instanceports semicolon
-            | instancename instancetype instanceattributes semicolon 
-            | instancename instancetype instanceports semicolon 
-;
+nac : 'nac' leftNACbrace modifyingsubs rightNACbrace;
+
+ac : 'ac' leftACbrace expr rightACbrace;
+
+
+instances : (instance)*?
+        | (instanceconnection)*? 
+        ;
+
+instance : instancename instancetype instanceattributes instanceports instancesemicolon
+            | instancename instancetype instanceattributes instancesemicolon 
+            | instancename instancetype instanceports instancesemicolon 
+            | instancename instanceports instancesemicolon             
+            ;
+instanceconnection: connections connectionsemicolon ;
+
+
 
 instancename : ID; 
 
 instancetype : ID; 
 
+instancesemicolon : semicolon; 
+
 instanceattributes : '[' instanceattribute (',' instanceattribute)*? ']';
 
-instanceattribute : ID '<-' instanceattrval;
+instanceattribute : instanceattrkey instanceattributeoperator instanceattrval;
+
+instanceattributeoperator : '='
+                          | '==';
+                 
+instanceattrkey : ID ;
 
 instanceattrval  : ID 
                  | NUM
-                 | Binstr2int;
+                 | Binstr2int
+                 | STRING_Note
+                 | expr_val;
                  
 Binstr2int : 'binstr2int' '(' ID ')';
 
 instanceports : '(' instanceport  (',' instanceport)*?')';
 
-instanceport : ID '=' portname ;
+instanceport : instanceportsource '->' instanceporttarget;
+            
+instanceportsource : portname ; 
 
-portname : ID'.'ID;
+instanceporttarget : portname ; 
+
+
+portname : ID'.'ID
+        | ID ;
+
+connections : source '->' target;
+
+connectionsemicolon : ';';
+
+source : ID;
+
+target : ID;
 
 
 modifyingsubs : modifyingsub (modifyingsub)*?;
@@ -85,7 +127,7 @@ delinstances : 'del' delinstance;
 
 delinstance : instance;
 
-modifyattrs : instancename modifyinstanceattributes semicolon;
+modifyattrs : instancename modifyinstanceattributes instancesemicolon;
 
 modifyinstanceattributes : instanceattributes;
 
@@ -96,7 +138,8 @@ subsequences : subsequence (subsequence)*?;
 
 subsequence : 'subsequence'  COLON subsequenceiterationcount '{' ruleiterations '}';
 
-subsequenceiterationcount : NUM;
+subsequenceiterationcount : NUM
+                            | '*';
 
 ruleiterations : ruleiteration (ruleiteration)*? ; 
 
@@ -104,13 +147,47 @@ ruleiteration : rulenameinsequence COLON ruleitercount semicolon;
 
 rulenameinsequence : ID;
 
-ruleitercount : NUM;
+ruleitercount : NUM
+              | '*';
 
+expr : expr_val operators expr_val;
 
- 
+expr_val : ID 
+         | ID operators ID 
+         | ID operators STRING_Note
+         | ID operators NUM;
+operators : '+'
+          | '-'
+          | '*'
+          | '/'
+          | '<'
+          | '>'   
+          |  '==' 
+          | '!=';
+          
+leftrulebrace : leftbrace;
 
+rightrulebrace : rightbrace;
 
+leftmainrulebrace : leftbrace;
 
+rightmainrulebrace : rightbrace;
+
+leftACbrace : leftbrace;
+
+leftNACbrace : leftbrace; 
+
+leftLHSbrace : leftbrace; 
+
+rightACbrace :  rightbrace; 
+
+rightLHSbrace :  rightbrace; 
+
+rightNACbrace :  rightbrace; 
+          
+leftbrace : '{';
+
+rightbrace : '}';
 
 DEFINE : 'define';
 
@@ -132,6 +209,10 @@ semicolon : ';';
 
 ID : [a-zA-Z_][a-zA-Z0-9_]+ 
    | [a-zA-Z_]+;
+
+   
+STRING_Note : '\'' ~('\\'|'\'')* '\''
+          |'"' ~('\\'|'"')* '"';
 
 NUM :[0-9]+;
 

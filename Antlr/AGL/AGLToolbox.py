@@ -19,108 +19,293 @@ class colonsplit:
         return attr[0],attr[1]
     
     
-class define:
+class Define:
     def __init__(self):
         self.attributes = {}
         self.ports = {}
         
-    def add_attribute(self,attr):
+    def addAttribute(self,attr):
         key,value = colonsplit(attr)
         self.attributes[key] = value
     
-    def add_port(self,port):
+    def addPort(self,port):
         key,value = colonsplit(port)
         self.ports[key] = value
         
-    def get_attributes(self):
+    def getAttributes(self):
         return self.attributes 
     
-    def get_ports(self):
+    def getPorts(self):
         return self.ports 
 
 
-class rule:
-    def __init__(self):
-        self.LHS = None
-        self.RHS = None
+class Rule:
+    def __init__(self,defines):
+        self.defines = defines 
+        self.LHS = Graph(defines)
+        self.RHS = Graph(defines)
         self.NACs = {}
+        self.AC = []
+        self.parameters = {}
+        self.instanceType = {}
     
-    def addLHS(self,graph):
-        self.LHS = graph
+    def addInstanceType(self,name,type_):
+        try:
+            if self.instanceType[name] != type_ and type_ != None:
+                raise Exception("The {} is already have the type {} and cannot be used as type {}".format(
+                    name, self.instanceType[name],type_))
+        except KeyError:
+            self.instanceType[name] = type_
+            
+    def addLHSInstance(self,name,instance):
+        self.LHS.addInstance(name, instance)
+        self.addInstanceType(name,instance.getInstanceType())
 
-    def addRHS(self,graph):
-        self.RHS = graph 
+    def addRHSInstance(self,name,instance):
+        self.RHS.addInstance(name, instance)
+        self.addInstanceType(name,instance.getInstanceType())
+    
+    def modifyRHSAttr(self,name,instance): 
+        self.RHS.modifyInstanceAttr(name, instance)
+    
+    def instatiateNAC(self,nacName):
+        for key,val in self.LHS.getInstances().items():
+            self.addNACInstance(nacName,key,val)
         
-    def addNAC(self,name,graph):
-        self.NACs[name] = graph
+    def addNACInstance(self,nacName,instanceName,instance):
+        try:
+            self.NACs[nacName].addInstance(instanceName,instance)
+        except:
+            self.NACs[nacName] = Graph(self.defines)
+            self.NACs[nacName].addInstance(instanceName,instance)
+        self.addInstanceType(instanceName,instance.getInstanceType())
+        
+    def modifyNACAttr(self,nacName,instanceName,instance):
+        try:
+            self.NACs[nacName].modifyInstanceAttr(instanceName,instance)
+        except: 
+            raise Exception("NAC : {} doesnot exists !".format(nacName))
+            
+            
+    def delRHSInstance(self,name): 
+        self.RHS.delInstance(name)
+        
+    def delNACInstance(self,nacName,instanceName):
+        self.NACs[nacName].delInstance(instanceName)
+        
+    def addAC(self,val): 
+        self.AC.append(val)
     
-    def getNACs(self): self.NACs
-    
+    def addParameters(self,key,val):
+        self.parameters[key] = val 
+              
+    def getNACs(self): return self.NACs
         
     def getLHS(self):return self.LHS 
     
     def getRHS(self):return self.RHS
     
+    def getAC(self): return self.AC 
+    
+    def getParameters(self): return self.parameters
+    
+    def getInstanceType(self) : return self.instanceType
+    
 
 class Graph:
-    def __init__(self):
+    def __init__(self,defines):
+        self.defines = defines 
         self.graph = nx.DiGraph()
+        self.instances = {}
     
-    def add_node(self,node):
-        string = node.get_name()
-        for key,value in node.get_attributes():
-            string += ",{} = {}".format(key,value)
-        self.graph.add_node(string)
+    def addInstance(self,name,instance):
+        self.instances[name] = instance 
     
-    def add_edge(self,source,target):
-        self.graph.add_edge(source, target)
+    def modifyInstanceAttr(self,name,givenInstance):
+        try:
+            currentInstance = self.instances[name]
+        except: 
+            raise Exception("The instancename : {} is not avaialable for Modification ".format(name))
+        for key,val in givenInstance.getInstanceAttrs().items():
+            instanceAttrObj = InstanceAttr()
+            instanceAttrObj.addKey(key)
+            instanceAttrObj.addVal(val)
+            currentInstance.addInstanceAttr(instanceAttrObj)
     
-    def get_graph(self): return self.graph
+    
+    def delInstance(self,name):
+        del self.instance[name]
+    
+    def getGraph(self): return self.graph
+    
+    def getInstances(self): 
+        return self.instances
+    
+    def copyGraph(self): 
+        copyGraph = Graph(self.defines)
+        
+        for eachInstace in self.instances : 
+            copyGraph.addInstance(eachInstace)
+        return copyGraph
+    
+    def graph2Nx(self):
+        portName = lambda inst,port : "{}.{}".format(inst,port)
+        portType = lambda inst,port : "{}_{}".format(inst,port)
+        
+        for key,instance in self.instances.items():
+            instanceName = instance.getInstanceName()
+            instanceAttrs = instance.getInstanceAttrs()
+            instancePorts = instance.getInstancePorts()
+            instanceType = instance.getInstanceType()
+            instanceConnections = instance.getConnections()
+            # print("instanceName : {}".format(instanceName))
+            # print("instancePorts : {}".format(instancePorts))
+            
+            
+            if instanceName != None:
+                self.graph.add_node(instanceName,type = instanceName, isInstance = True)
+                for key,val in instanceAttrs.items():
+                    self.graph.nodes[instanceName][key] = val
+                    # print("instanceAttr : {}  instanceAttrVal : {}".format(key,val))
+                    
+                # getting the ports 
+                ports = self.defines[instanceType].getPorts()
+                for key,val in ports.items(): 
+                    
+                    self.graph.add_node(portName(instanceName, key),type = portType(instanceType,key),isInstance = False)
+                    if val == "in":
+                        self.graph.add_edge(portName(instanceName, key), instanceName)
+                    elif val == "out":
+                        self.graph.add_edge(instanceName, portName(instanceName, key))
+                        
+                for eachedge in instancePorts:
+                    self.graph.add_edge(eachedge[0], eachedge[1])
+                    # print("{} -> {}".format(eachedge[0],eachedge[1]))
+            else : 
+                self.graph.add_edge(instanceConnections[0], instanceConnections[1])
+                
+    def __name__(self): return "Graph"    
+    
+        
+            
 
 
-class node:
-    def __init__(self,name):
-        self.name = name 
-        self.attr = {}
+
+class Instance: 
+    def __init__(self,name=None):
+        self.instanceName = name 
+        self.instanceType = None 
+        self.instanceAttr = {} 
+        self.instancePorts = []
+        self.connections = ()
     
-    def add_attriutes(self,type_,value):
-        self.attr[type_] = value
+    def addInstanceName(self,name): 
+        self.instanceName = name 
     
-    def get_attributes(self): return self.attr 
-
-    def get_name(self): return self.name 
-       
-
-
-class AGLData:
+    def getInstanceName(self):
+        return self.instanceName
+    
+    def addInstanceType(self,type_): 
+        self.instanceType = type_ 
+        
+    def getInstanceType(self): 
+        return self.instanceType
+    
+    def addInstanceAttr(self,instanceAttr): 
+        key,value = instanceAttr.items()
+        self.instanceAttr[key] = value 
+        
+        
+    def addConnections(self,pair):
+        self.connections = pair
+        
+    def getInstanceAttrs(self): 
+        return self.instanceAttr
+    
+    def addInstancePort(self,instancePort):
+        source,target = instancePort.items()
+        if len(source.split(".")) == 1:
+            source = "{}.{}".format(self.instanceName,source)
+        if len(target.split(".")) == 1:
+            target = "{}.{}".format(self.instanceName,target)
+        self.instancePorts.append((source,target))
+        
+    def getInstancePorts(self): 
+        return self.instancePorts
+    
+    def getConnections(self):
+        return self.connections
+    
+    
+class InstanceAttr: 
     def __init__(self):
-        self.defines = {}
-        self.rules = {}
+        self.key = None 
+        self.val = None 
     
+    def addKey(self ,key):
+        self.key = key 
+    
+    def addVal(self,val): 
+        self.val = val 
+    
+    def addOperator(self,operator): 
+        self.operator = operator 
+    
+    def getOperator(self): 
+        return self.operator
+    
+    def items(self):
+        return self.key,self.val 
+            
+            
+class InstancePort: 
+    def __init__(self):
+        self.source = None 
+        self.target = None 
+    
+    def addSource(self,source): 
+        self.source = source 
+    
+    def addTarget(self,target): 
+        self.target = target 
+        
+    def items(self): 
+        # if self.source == None: 
+        #     raise Exception("Source in the instaceport is Empty")
+        # if self.target == None: 
+        #     raise Exception("Target in the instaceport is Empty")
+        return self.source,self.target 
+        
+            
+    
+    
+class RuleSequence:
+    def __init__(self):
+        self.subsequences = []
+    
+    def addSubsequence(self,subsequnce,count):
+        name = subsequnce.getName()
+        self.subsequences.append("{} : {}".format(name,count))
+    
+    def getRulesequence(self):
+        return self.subsequences
 
-    def add_modulename(self,name):
-        self.modulename = name 
-        
-
-    def get_modulename(self):
-        return self.modulename 
+class SubSequnce:
+    def __init__(self,name):
+        self.rules = []
+        self.name = name 
     
+    def addRule(self,rulename,count):
+        self.rules = "{}:{}".format(rulename,count)
     
-    def add_defines(self,nodetype,define):
-        self.defines[nodetype] = define
+    def getName(self):
+        return self.name 
     
+    def getSubsequence(self):
+        return self.rules     
     
-    def get_defines(self):
-        return self.defines 
-    
-    def add_rule(self,name,rule):
-        self.rules[name] = rule
-        
-    def get_rules(self):
-        return self.rules
-    
-        
-        
+    def getIter(self): 
+        return self.count
     
 #-----------------------------------------------------------------------------#
 
