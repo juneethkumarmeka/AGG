@@ -17,12 +17,21 @@ class AGLListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by AGLParser#data.
-    def enterData(self, ctx:AGLParser.DataContext):
+    # Enter a parse tree produced by AGLParser#grammartype.
+    def enterGrammartype(self, ctx:AGLParser.GrammartypeContext):
         pass
 
-    # Exit a parse tree produced by AGLParser#data.
-    def exitData(self, ctx:AGLParser.DataContext):
+    # Exit a parse tree produced by AGLParser#grammartype.
+    def exitGrammartype(self, ctx:AGLParser.GrammartypeContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#grammartypevalue.
+    def enterGrammartypevalue(self, ctx:AGLParser.GrammartypevalueContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#grammartypevalue.
+    def exitGrammartypevalue(self, ctx:AGLParser.GrammartypevalueContext):
         pass
 
 
@@ -98,6 +107,24 @@ class AGLListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by AGLParser#mainrule.
+    def enterMainrule(self, ctx:AGLParser.MainruleContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#mainrule.
+    def exitMainrule(self, ctx:AGLParser.MainruleContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#mainrulename.
+    def enterMainrulename(self, ctx:AGLParser.MainrulenameContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#mainrulename.
+    def exitMainrulename(self, ctx:AGLParser.MainrulenameContext):
+        pass
+
+
     # Enter a parse tree produced by AGLParser#ruledelcaration.
     def enterRuledelcaration(self, ctx:AGLParser.RuledelcarationContext):
         pass
@@ -125,12 +152,39 @@ class AGLListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by AGLParser#applyingconditions.
+    def enterApplyingconditions(self, ctx:AGLParser.ApplyingconditionsContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#applyingconditions.
+    def exitApplyingconditions(self, ctx:AGLParser.ApplyingconditionsContext):
+        pass
+
+
     # Enter a parse tree produced by AGLParser#subgraph.
     def enterSubgraph(self, ctx:AGLParser.SubgraphContext):
         pass
 
     # Exit a parse tree produced by AGLParser#subgraph.
     def exitSubgraph(self, ctx:AGLParser.SubgraphContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#nac.
+    def enterNac(self, ctx:AGLParser.NacContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#nac.
+    def exitNac(self, ctx:AGLParser.NacContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#ac.
+    def enterAc(self, ctx:AGLParser.AcContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#ac.
+    def exitAc(self, ctx:AGLParser.AcContext):
         pass
 
 
@@ -152,6 +206,15 @@ class AGLListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by AGLParser#instanceconnection.
+    def enterInstanceconnection(self, ctx:AGLParser.InstanceconnectionContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#instanceconnection.
+    def exitInstanceconnection(self, ctx:AGLParser.InstanceconnectionContext):
+        pass
+
+
     # Enter a parse tree produced by AGLParser#instancename.
     def enterInstancename(self, ctx:AGLParser.InstancenameContext):
         pass
@@ -170,6 +233,15 @@ class AGLListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by AGLParser#instancesemicolon.
+    def enterInstancesemicolon(self, ctx:AGLParser.InstancesemicolonContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#instancesemicolon.
+    def exitInstancesemicolon(self, ctx:AGLParser.InstancesemicolonContext):
+        pass
+
+
     # Enter a parse tree produced by AGLParser#instanceattributes.
     def enterInstanceattributes(self, ctx:AGLParser.InstanceattributesContext):
         pass
@@ -185,6 +257,24 @@ class AGLListener(ParseTreeListener):
 
     # Exit a parse tree produced by AGLParser#instanceattribute.
     def exitInstanceattribute(self, ctx:AGLParser.InstanceattributeContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#instanceattributeoperator.
+    def enterInstanceattributeoperator(self, ctx:AGLParser.InstanceattributeoperatorContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#instanceattributeoperator.
+    def exitInstanceattributeoperator(self, ctx:AGLParser.InstanceattributeoperatorContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#instanceattrkey.
+    def enterInstanceattrkey(self, ctx:AGLParser.InstanceattrkeyContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#instanceattrkey.
+    def exitInstanceattrkey(self, ctx:AGLParser.InstanceattrkeyContext):
         pass
 
 
@@ -215,12 +305,66 @@ class AGLListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by AGLParser#instanceportsource.
+    def enterInstanceportsource(self, ctx:AGLParser.InstanceportsourceContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#instanceportsource.
+    def exitInstanceportsource(self, ctx:AGLParser.InstanceportsourceContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#instanceporttarget.
+    def enterInstanceporttarget(self, ctx:AGLParser.InstanceporttargetContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#instanceporttarget.
+    def exitInstanceporttarget(self, ctx:AGLParser.InstanceporttargetContext):
+        pass
+
+
     # Enter a parse tree produced by AGLParser#portname.
     def enterPortname(self, ctx:AGLParser.PortnameContext):
         pass
 
     # Exit a parse tree produced by AGLParser#portname.
     def exitPortname(self, ctx:AGLParser.PortnameContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#connections.
+    def enterConnections(self, ctx:AGLParser.ConnectionsContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#connections.
+    def exitConnections(self, ctx:AGLParser.ConnectionsContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#connectionsemicolon.
+    def enterConnectionsemicolon(self, ctx:AGLParser.ConnectionsemicolonContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#connectionsemicolon.
+    def exitConnectionsemicolon(self, ctx:AGLParser.ConnectionsemicolonContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#source.
+    def enterSource(self, ctx:AGLParser.SourceContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#source.
+    def exitSource(self, ctx:AGLParser.SourceContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#target.
+    def enterTarget(self, ctx:AGLParser.TargetContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#target.
+    def exitTarget(self, ctx:AGLParser.TargetContext):
         pass
 
 
@@ -365,6 +509,141 @@ class AGLListener(ParseTreeListener):
 
     # Exit a parse tree produced by AGLParser#ruleitercount.
     def exitRuleitercount(self, ctx:AGLParser.RuleitercountContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#expr.
+    def enterExpr(self, ctx:AGLParser.ExprContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#expr.
+    def exitExpr(self, ctx:AGLParser.ExprContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#expr_val.
+    def enterExpr_val(self, ctx:AGLParser.Expr_valContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#expr_val.
+    def exitExpr_val(self, ctx:AGLParser.Expr_valContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#operators.
+    def enterOperators(self, ctx:AGLParser.OperatorsContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#operators.
+    def exitOperators(self, ctx:AGLParser.OperatorsContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#leftrulebrace.
+    def enterLeftrulebrace(self, ctx:AGLParser.LeftrulebraceContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#leftrulebrace.
+    def exitLeftrulebrace(self, ctx:AGLParser.LeftrulebraceContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#rightrulebrace.
+    def enterRightrulebrace(self, ctx:AGLParser.RightrulebraceContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#rightrulebrace.
+    def exitRightrulebrace(self, ctx:AGLParser.RightrulebraceContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#leftmainrulebrace.
+    def enterLeftmainrulebrace(self, ctx:AGLParser.LeftmainrulebraceContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#leftmainrulebrace.
+    def exitLeftmainrulebrace(self, ctx:AGLParser.LeftmainrulebraceContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#rightmainrulebrace.
+    def enterRightmainrulebrace(self, ctx:AGLParser.RightmainrulebraceContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#rightmainrulebrace.
+    def exitRightmainrulebrace(self, ctx:AGLParser.RightmainrulebraceContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#leftACbrace.
+    def enterLeftACbrace(self, ctx:AGLParser.LeftACbraceContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#leftACbrace.
+    def exitLeftACbrace(self, ctx:AGLParser.LeftACbraceContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#leftNACbrace.
+    def enterLeftNACbrace(self, ctx:AGLParser.LeftNACbraceContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#leftNACbrace.
+    def exitLeftNACbrace(self, ctx:AGLParser.LeftNACbraceContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#leftLHSbrace.
+    def enterLeftLHSbrace(self, ctx:AGLParser.LeftLHSbraceContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#leftLHSbrace.
+    def exitLeftLHSbrace(self, ctx:AGLParser.LeftLHSbraceContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#rightACbrace.
+    def enterRightACbrace(self, ctx:AGLParser.RightACbraceContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#rightACbrace.
+    def exitRightACbrace(self, ctx:AGLParser.RightACbraceContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#rightLHSbrace.
+    def enterRightLHSbrace(self, ctx:AGLParser.RightLHSbraceContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#rightLHSbrace.
+    def exitRightLHSbrace(self, ctx:AGLParser.RightLHSbraceContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#rightNACbrace.
+    def enterRightNACbrace(self, ctx:AGLParser.RightNACbraceContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#rightNACbrace.
+    def exitRightNACbrace(self, ctx:AGLParser.RightNACbraceContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#leftbrace.
+    def enterLeftbrace(self, ctx:AGLParser.LeftbraceContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#leftbrace.
+    def exitLeftbrace(self, ctx:AGLParser.LeftbraceContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#rightbrace.
+    def enterRightbrace(self, ctx:AGLParser.RightbraceContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#rightbrace.
+    def exitRightbrace(self, ctx:AGLParser.RightbraceContext):
         pass
 
 

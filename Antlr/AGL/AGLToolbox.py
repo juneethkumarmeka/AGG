@@ -9,6 +9,7 @@ Project Name : Attributed Graph Grammar Benchmark Development
 #Modules
 #-----------------------------------------------------------------------------#
 import networkx as nx 
+from copy import deepcopy
 #-----------------------------------------------------------------------------#
 
 #Source Code
@@ -78,7 +79,7 @@ class Rule:
         except:
             self.NACs[nacName] = Graph(self.defines)
             self.NACs[nacName].addInstance(instanceName,instance)
-        self.addInstanceType(instanceName,instance.getInstanceType())
+        # self.addInstanceType(instanceName,instance.getInstanceType())
         
     def modifyNACAttr(self,nacName,instanceName,instance):
         try:
@@ -87,11 +88,11 @@ class Rule:
             raise Exception("NAC : {} doesnot exists !".format(nacName))
             
             
-    def delRHSInstance(self,name): 
-        self.RHS.delInstance(name)
+    def delRHSInstance(self,name,instance): 
+        self.RHS.delInstance(name,instance)
         
-    def delNACInstance(self,nacName,instanceName):
-        self.NACs[nacName].delInstance(instanceName)
+    def delNACInstance(self,nacName,instanceName,instance):
+        self.NACs[nacName].delInstance(instanceName,instance)
         
     def addAC(self,val): 
         self.AC.append(val)
@@ -119,11 +120,27 @@ class Graph:
         self.instances = {}
     
     def addInstance(self,name,instance):
-        self.instances[name] = instance 
+        try:
+            currentInstance = deepcopy(self.instances[name])
+            for eachport in instance.getInstancePorts(): 
+                source = eachport[0]
+                target = eachport[1]
+                instancePortobj = InstancePort()
+                instancePortobj.addSource(source)
+                instancePortobj.addTarget(target)
+                currentInstance.addInstancePort(instancePortobj)
+            for key,val in instance.getInstanceAttrs().items():
+                instanceAttrObj = InstanceAttr()
+                instanceAttrObj.addKey(key)
+                instanceAttrObj.addVal(val)
+                currentInstance.addInstanceAttr(instanceAttrObj)
+            self.instances[name] = currentInstance
+        except: 
+            self.instances[name] = deepcopy(instance) 
     
     def modifyInstanceAttr(self,name,givenInstance):
         try:
-            currentInstance = self.instances[name]
+            currentInstance = deepcopy(self.instances[name])
         except: 
             raise Exception("The instancename : {} is not avaialable for Modification ".format(name))
         for key,val in givenInstance.getInstanceAttrs().items():
@@ -131,10 +148,27 @@ class Graph:
             instanceAttrObj.addKey(key)
             instanceAttrObj.addVal(val)
             currentInstance.addInstanceAttr(instanceAttrObj)
+        self.instances[name] = currentInstance
     
     
-    def delInstance(self,name):
-        del self.instance[name]
+    def delInstance(self,name,instance):
+        try: 
+            currentInstance = deepcopy(self.instances[name])
+            for eachport in instance.getInstancePorts(): 
+                source = eachport[0]
+                target = eachport[1]
+                instancePortobj = InstancePort()
+                instancePortobj.addSource(source)
+                instancePortobj.addTarget(target)
+                currentInstance.delInstancePort(instancePortobj)
+            for key,val in instance.getInstanceAttrs().items():
+                instanceAttrObj = InstanceAttr()
+                instanceAttrObj.addKey(key)
+                instanceAttrObj.addVal(val)
+                currentInstance.delInstanceAttr(instanceAttrObj)
+            self.instances[name] = currentInstance
+        except: 
+            raise Exception("The {} is not available for deleting".format(name))
     
     def getGraph(self): return self.graph
     
@@ -160,18 +194,20 @@ class Graph:
             instanceConnections = instance.getConnections()
             # print("instanceName : {}".format(instanceName))
             # print("instancePorts : {}".format(instancePorts))
+            # print("instanceAttrs : {}".format(instanceAttrs))
+            # print("instanceType : {}".format(instanceType))
             
             
             if instanceName != None:
-                self.graph.add_node(instanceName,type = instanceName, isInstance = True)
+                self.graph.add_node(instanceName,type = instanceType, isInstance = True)
                 for key,val in instanceAttrs.items():
                     self.graph.nodes[instanceName][key] = val
                     # print("instanceAttr : {}  instanceAttrVal : {}".format(key,val))
                     
                 # getting the ports 
+                    
                 ports = self.defines[instanceType].getPorts()
                 for key,val in ports.items(): 
-                    
                     self.graph.add_node(portName(instanceName, key),type = portType(instanceType,key),isInstance = False)
                     if val == "in":
                         self.graph.add_edge(portName(instanceName, key), instanceName)
@@ -183,6 +219,7 @@ class Graph:
                     # print("{} -> {}".format(eachedge[0],eachedge[1]))
             else : 
                 self.graph.add_edge(instanceConnections[0], instanceConnections[1])
+        return self.graph
                 
     def __name__(self): return "Graph"    
     
@@ -192,7 +229,7 @@ class Graph:
 
 
 class Instance: 
-    def __init__(self,name=None):
+    def __init__(self,name = None):
         self.instanceName = name 
         self.instanceType = None 
         self.instanceAttr = {} 
@@ -229,6 +266,30 @@ class Instance:
         if len(target.split(".")) == 1:
             target = "{}.{}".format(self.instanceName,target)
         self.instancePorts.append((source,target))
+    
+    def delInstanceAttr(self,name): 
+        try:
+            del self.instanceAttr[name]
+        except: 
+            raise Exception("{} is not having the attribute {} to delete".format(self.instanceName,name))
+    
+    def delInstancePort(self,instancePort):
+        source,target = instancePort.items()
+        if len(source.split(".")) == 1:
+            source = "{}.{}".format(self.instanceName,source)
+        if len(target.split(".")) == 1:
+            target = "{}.{}".format(self.instanceName,target)
+        for eachport in self.instacePorts: 
+            if source == eachport[0] and target == eachport[1]:
+                index = self.instancePorts.index(eachport)
+                self.instancePorts.pop(index)
+                return 
+        raise Exception("The {} is not having edge {} -> {} to delete".format(self.instanceName,source,target))
+    
+    
+        
+        
+        
         
     def getInstancePorts(self): 
         return self.instancePorts
@@ -236,6 +297,7 @@ class Instance:
     def getConnections(self):
         return self.connections
     
+    def getInstance(self): return self 
     
 class InstanceAttr: 
     def __init__(self):
@@ -256,6 +318,8 @@ class InstanceAttr:
     
     def items(self):
         return self.key,self.val 
+    
+    
             
             
 class InstancePort: 
@@ -284,8 +348,8 @@ class RuleSequence:
         self.subsequences = []
     
     def addSubsequence(self,subsequnce,count):
-        name = subsequnce.getName()
-        self.subsequences.append("{} : {}".format(name,count))
+        subsequnce.addCount(count)
+        self.subsequences.append(subsequnce)
     
     def getRulesequence(self):
         return self.subsequences
@@ -294,14 +358,18 @@ class SubSequnce:
     def __init__(self,name):
         self.rules = []
         self.name = name 
+        self.count = None
     
+    def addCount(self,count): 
+        self.count = count 
+        
     def addRule(self,rulename,count):
-        self.rules = "{}:{}".format(rulename,count)
+        self.rules.append("{}:{}".format(rulename,count))
     
     def getName(self):
         return self.name 
     
-    def getSubsequence(self):
+    def getSubSequences(self):
         return self.rules     
     
     def getIter(self): 

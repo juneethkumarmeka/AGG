@@ -39,7 +39,8 @@ from GraGra2ggx.TagCreator import CreateTag
 from GraGra2ggx.TagCreator import CreateText
 from GraGra2ggx.TagCreator import WriteTaggedValue
 import networkx as nx
-from GraGra2ggx.Tags import GraphTags
+from GraGra2ggx.Tags import *
+from copy import deepcopy
 
 #-----------------------------------------------------------------------------#
 
@@ -143,18 +144,42 @@ class AGLData(AGLVisitor):
     def visitInstanceattrval(self, ctx:AGLParser.InstanceattrvalContext):
         self.currentInstanceAttr.addVal(ctx.getText())
         self.currentInstance.addInstanceAttr(self.currentInstanceAttr)
+        
+        try:
+            definesAttr = self.defines[self.currentInstance.getInstanceType()].getAttributes()
+        except:
+            raise Exception("Node type : {} is not defined".format(self.currentInstance.getInstanceType()))
+        try:
+            dataType = definesAttr[self.currentInstanceAttr.items()[0]]
+        except: 
+            raise Exception("Node type : {} is not having the attributes : {}".format(
+                self.currentInstance.getInstanceType(),self.currentInstanceAttr.items()[0]))
+        if  self.currentInstanceAttr.getOperator() == "==":
+            if self.isHostGraph == None :
+                self.rules[self.ruleName].addParameters(self.currentInstanceAttr.items()[1],dataType)
+            else : 
+                raise Exception("The Parameters cannot be assinged in Host")
         return self.visitChildren(ctx)
     
     def visitAddinstances(self, ctx:AGLParser.AddinstancesContext):
         self.isAddInstance = True 
+        self.isLHS = None 
+        self.isModifyAttr = None
+        self.isDelInstance = None
         return self.visitChildren(ctx)
     
     def visitDelinstances(self, ctx:AGLParser.DelinstancesContext):
         self.isDelInstance = True
+        self.isModifyAttr = None
+        self.isLHS = None 
+        self.isAddInstance = None
         return self.visitChildren(ctx)
     
     def visitModifyattrs(self, ctx:AGLParser.ModifyattrsContext):
         self.isModifyAttr = True
+        self.isLHS = None
+        self.isAddInstance = None
+        self.isDelInstance = None
         return self.visitChildren(ctx)
     
     def visitInstanceport(self, ctx:AGLParser.InstanceportContext):
@@ -279,21 +304,6 @@ class AGLData(AGLVisitor):
     
     def visitInstanceattributeoperator(self, ctx:AGLParser.InstanceattributeoperatorContext):
         self.currentInstanceAttr.addOperator(ctx.getText())
-        
-        try:
-            definesAttr = self.defines[self.currentInstance.getInstanceType()].getAttributes()
-        except:
-            raise Exception("Node type : {} is not defined".format(self.currentInstance.getInstanceType()))
-        try:
-            dataType = definesAttr[self.currentInstanceAttr.items()[0]]
-        except: 
-            raise Exception("Node type : {} is not having the attributes : {}".format(
-                self.currentInstance.getInstanceType(),self.currentInstanceAttr.items()[0]))
-        if ctx.getText() == "==":
-            if self.isHostGraph == None :
-                self.rules[self.ruleName].addParameters(self.currentInstanceAttr.items()[0],dataType)
-            else : 
-                raise Exception("The Parameters cannot be assinged in Host")
         return self.visitChildren(ctx)
     
     def visitInstancesemicolon(self, ctx:AGLParser.InstancesemicolonContext):
@@ -391,24 +401,77 @@ class AGL2GGX:
     def __init__(self,AGLfile): 
         self.aglData = AGLData.Parsing(AGLfile)
         self.gragra = ggx.GraGra("GraGra")
+        self.rules = {}
         
     def addDefines(self):
         for nodeType,define in self.aglData.defines.items(): 
             self.gragra.addNodeType(nodeType)
             for attr, attrtype in define.getAttributes().items():
                 self.gragra.addNodeTypeAttribute(nodeType, attr, attrtype)
+            self.gragra.addNodeTypeAttribute(nodeType, "isInstance", "boolean")
             for port,type_ in define.getPorts().items(): 
                 self.gragra.addNodeType("{}_{}".format(nodeType,port))
+                self.gragra.addNodeTypeAttribute("{}_{}".format(nodeType,port),"isInstance","boolean")
+                
                 
     def addHost(self):
         host = self.aglData.host.graph2Nx()
         HostGraph = GraphTags("Graph1","HOST",host)
         self.gragra.addHostGraph(HostGraph)
-        
+    
+    def addRules(self): 
+        rules = self.aglData.rules
+        for ruleName,rule in rules.items(): 
+            print("\n\n Processing the {}".format(ruleName))
+            for name,instance in rule.LHS.getInstances().items():
+                name = instance.getInstanceName()
+                type_ = instance.getInstanceType()
+                ports = instance.getInstancePorts()
+                attr = instance.getInstanceAttrs()
+                print("LHS : {}  type : {} port {} Attrs : {}".format(name,type_,ports,attr) )
+            for name,instance in rule.RHS.getInstances().items():
+                name = instance.getInstanceName()
+                type_ = instance.getInstanceType()
+                ports = instance.getInstancePorts()
+                attr = instance.getInstanceAttrs()
+                print("RHS : {}  type : {} port {} Attrs : {}".format(name,type_,ports,attr) )
+            LHS = rule.LHS.graph2Nx()
+            RHS = rule.RHS.graph2Nx()
+            currentRule = RuleTags("{}".format(ruleName),LHS,RHS)
+            for nacName,NACGraph in rule.NACs.items():
+                currentRule.add_NAC(nacName, NACgraph.graph2Nx())
             
+            for parameter,parameterType in rule.parameters.items():
+                currentRule.add_parameter(parameter, parameterType)
+            
+            for eachAC in rule.AC : 
+                currentRule.add_attrcondition(eachAC)
+                
+            self.gragra.addRule(currentRule)
+            
+    def addRuleSequences(self): 
+        ruleSequence = self.aglData.ruleSequence 
+        subs = {}
+        if ruleSequence:
+            Seq1 = SequenceTag("Rulesequence1")    
+            for eachSubSequence in ruleSequence.getRulesequence(): 
+                subSequenceName = eachSubSequence.getName()
+                subSequenceCount = eachSubSequence.getIter()
+                subs[subSequenceName] = SubsequenceTag()
+                for eachrule in eachSubSequence.getSubSequences():
+                    ruleName = eachrule.split(":")[0]
+                    ruleCount = eachrule.split(":")[1]
+                    subs[subSequenceName].addRule(ruleName, ruleCount)
+                Seq1.addSubSequence(subs[subSequenceName],subSequenceCount)
+            self.gragra.addRuleSequence(Seq1)
+                    
+                    
+                    
     def __call__(self):
         self.addDefines()
         self.addHost()
+        self.addRules()
+        self.addRuleSequences()
         ggxWriter("gfg.ggx",self.gragra)()
 #-----------------------------------------------------------------------------#
 
