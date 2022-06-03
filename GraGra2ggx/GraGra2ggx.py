@@ -138,7 +138,10 @@ class GraGra2ggxWriter:
         
         # Adding the Node Tags to the Graph Tag 
         for eachnode in GraphTag.getGraph().nodes:
-            node_type = GraphTag.getGraph().nodes[eachnode]["type"]
+            try:
+                node_type = GraphTag.getGraph().nodes[eachnode]["type"]
+            except: 
+                raise Exception("Cannot use the instance {} without declaring".format(eachnode))
             attributes = GraphTag.getGraph().nodes[eachnode].keys()
             try:
                 node_type_ID = self.Tags["NodeType"][node_type]["main"].getattribute("ID")
@@ -408,8 +411,8 @@ class GraGra2ggxWriter:
 # Rule1 = RuleTags("Rule1",Rule1_Left,Rule1_Right)
 # Rule1.add_NAC("NAC1",Rule1_NAC)
 # Rule1.add_NAC("NAC2",Rule1_NAC1)
-# Rule1.add_attrcondition("TL-SL", "<", "3")
-# Rule1.add_attrcondition("TL", "<", "3")
+# Rule1.add_attrcondition("TL-SL<3")
+# Rule1.add_attrcondition("TL<3")
 # Rule1.get_attrconditions()
 # Rule1.add_parameter("gate", "String")
 # Rule2 = RuleTags("Rule2",Rule1_Left,Rule1_Right)

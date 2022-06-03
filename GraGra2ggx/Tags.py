@@ -91,14 +91,13 @@ class RuleTags:
         """Adds the parameters to the rules"""
         self.parameters[parameter] = type_
         
-    def add_attrcondition(self,expression,conditionoperator,value):
+    def add_attrcondition(self,expression):
         """
             adds the conditions to the attribute values 
             inputs : expression, conditionoperator,value 
-                ex : SL-TL,>,2
+                ex : "SL-TL>2"
         """
-        condition = "{}{}{}".format(expression,conditionoperator,value)
-        self.AC.append(condition)
+        self.AC.append(expression)
         
     
     def get_parameters(self):
