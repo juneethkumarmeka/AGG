@@ -1,0 +1,96 @@
+Sat Jun 04 11:53:17 EDT 2022
+Version:  AGG 2.1
+
+Graph transformation by rule sequence of : GraGra
+on graph : Graph1
+rule sequence: ( Decoder_Init Change_Level )
+( Decoder_Main{*} Change_Level{*} Row_Decoder{*} )
+( Decoder_Init Change_Level )
+( Decoder_Main{*} Change_Level{*} Column_Decoder{*} )
+( RAM_Init RAM_Row{3} )
+( RAM_Col RAM_Row{3} ){3}
+( Row_Decoder_Connect_1 Row_Decoder_Connect_2 Col_Decoder_Connect_1 Col_Decoder_Connect_2 ){*}
+Termination 
+
+1. subsequence: ( Decoder_Init Change_Level )
+Decoder_Init 	 applied:  true
+Change_Level 	 applied:  false
+used time: 1654357997103ms
+
+1. subsequence: ( Decoder_Init Change_Level )	 applied
+2. subsequence: ( Decoder_Main{*} Change_Level{*} Row_Decoder{*} )
+Decoder_Main 	 applied:  true
+Decoder_Main 	 applied:  false
+Change_Level 	 applied:  true
+Change_Level 	 applied:  true
+Change_Level 	 applied:  false
+Row_Decoder 	 applied:  false
+used time: 1654357997104ms
+
+2. subsequence: ( Decoder_Main{*} Change_Level{*} Row_Decoder{*} )	 applied
+3. subsequence: ( Decoder_Init Change_Level )
+Decoder_Init 	 applied:  true
+Change_Level 	 applied:  false
+used time: 1654357997104ms
+
+3. subsequence: ( Decoder_Init Change_Level )	 applied
+4. subsequence: ( Decoder_Main{*} Change_Level{*} Column_Decoder{*} )
+Decoder_Main 	 applied:  true
+Decoder_Main 	 applied:  true
+Decoder_Main 	 applied:  true
+Decoder_Main 	 applied:  false
+Change_Level 	 applied:  true
+Change_Level 	 applied:  true
+Change_Level 	 applied:  true
+Change_Level 	 applied:  true
+Change_Level 	 applied:  true
+Change_Level 	 applied:  true
+Change_Level 	 applied:  false
+Column_Decoder 	 applied:  false
+used time: 1654357997105ms
+
+4. subsequence: ( Decoder_Main{*} Change_Level{*} Column_Decoder{*} )	 applied
+5. subsequence: ( RAM_Init RAM_Row{3} )
+RAM_Init 	 applied:  true
+RAM_Row 	 applied:  true
+RAM_Row 	 applied:  true
+RAM_Row 	 applied:  true
+used time: 1654357997105ms
+
+5. subsequence: ( RAM_Init RAM_Row{3} )	 applied
+6. subsequence: ( RAM_Col RAM_Row{3} ){3}
+RAM_Col 	 applied:  true
+RAM_Row 	 applied:  true
+RAM_Row 	 applied:  true
+RAM_Row 	 applied:  true
+used time: 1654357997105ms
+
+RAM_Col 	 applied:  true
+RAM_Row 	 applied:  true
+RAM_Row 	 applied:  true
+RAM_Row 	 applied:  true
+used time: 1654357997105ms
+
+RAM_Col 	 applied:  true
+RAM_Row 	 applied:  true
+RAM_Row 	 applied:  true
+RAM_Row 	 applied:  true
+used time: 1654357997105ms
+
+6. subsequence: ( RAM_Col RAM_Row{3} ){3}	 applied
+7. subsequence: ( Row_Decoder_Connect_1 Row_Decoder_Connect_2 Col_Decoder_Connect_1 Col_Decoder_Connect_2 ){*}
+Row_Decoder_Connect_1 	 applied:  false
+Row_Decoder_Connect_2 	 applied:  false
+Col_Decoder_Connect_1 	 applied:  false
+Col_Decoder_Connect_2 	 applied:  false
+used time: 1654357997105ms
+
+7. subsequence: ( Row_Decoder_Connect_1 Row_Decoder_Connect_2 Col_Decoder_Connect_1 Col_Decoder_Connect_2 ){*}	 applied
+8. subsequence: Termination 
+Termination 	 applied:  true
+used time: 1654357997105ms
+
+8. subsequence: Termination 	 applied
+Used time for graph transformation: 1028ms
+
+Graph transformation finished

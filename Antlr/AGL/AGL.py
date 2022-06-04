@@ -42,6 +42,7 @@ import networkx as nx
 from GraGra2ggx.Tags import *
 from copy import deepcopy
 
+
 #-----------------------------------------------------------------------------#
 
 #Source Code
@@ -142,7 +143,24 @@ class AGLData(AGLVisitor):
         return self.visitChildren(ctx)
     
     def visitInstanceattrval(self, ctx:AGLParser.InstanceattrvalContext):
-        self.currentInstanceAttr.addVal(ctx.getText())
+        if ctx.getText() == "True":
+            val= True
+        elif ctx.getText() == "False":
+            val= False
+        else: 
+            val = ctx.getText()
+            
+        if ctx.NUM():
+            val = int(val) 
+        
+        if ctx.Binstr2int():
+            matchobj = re.match(r'binstr2int\((.*)\)', val , re.M|re.I)
+            if matchobj : 
+                val = "Integer.parseInt({},2)".format(matchobj.group(1))
+            else: 
+                raise Exception("Please refer to string to binary conversion syntax")
+            
+        self.currentInstanceAttr.addVal(val)
         self.currentInstance.addInstanceAttr(self.currentInstanceAttr)
         
         try:
@@ -381,7 +399,8 @@ class AGLData(AGLVisitor):
         return self.visitChildren(ctx)
     
     def visitRuleiteration(self, ctx:AGLParser.RuleiterationContext):
-        rulename,count = ctx.getText().split(":")
+        val = ctx.getText().split(';')[0]
+        rulename,count = val.split(":")
         self.subSequence.addRule(rulename, count)
         return self.visitChildren(ctx)
     
@@ -402,6 +421,10 @@ class AGL2GGX:
         self.aglData = AGLData.Parsing(AGLfile)
         self.gragra = ggx.GraGra("GraGra")
         self.rules = {}
+        self.packages = []
+    
+    def addPackages(self,package): 
+        self.packages.append(package)
         
     def addDefines(self):
         for nodeType,define in self.aglData.defines.items(): 
@@ -467,16 +490,19 @@ class AGL2GGX:
                     
                     
                     
-    def __call__(self):
+    def __call__(self,outFileName="gfg",packages= None):
         self.addDefines()
         self.addHost()
         self.addRules()
         self.addRuleSequences()
-        ggxWriter("gfg.ggx",self.gragra)()
+        if packages == None: 
+            ggxWriter("{}.ggx".format(outFileName),self.gragra,packages= self.packages)()
+        else: 
+            ggxWriter("{}.ggx".format(outFileName),self.gragra,packages= packages)()
 #-----------------------------------------------------------------------------#
 
 #Testing
 #-----------------------------------------------------------------------------#
-AGL2GGX("./Memory_V2.txt")()
+AGL2GGX("./Memory_V2.txt")(["Integer.parseInt","Integer.toBinaryString"])
 #-----------------------------------------------------------------------------#
 

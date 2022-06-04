@@ -1,6 +1,6 @@
 grammar AGL;
 
-start : 'module' modulename '{'(grammartype)? definerules (definerules)*? (mainrule)*? ruledelcaration (ruledelcaration)*? rulesequence '}';
+start : 'module' modulename '{'(grammartype)? definerules (definerules)*? (mainrule)*? ruledelcaration (ruledelcaration)*? (rulesequence)? '}';
 
 grammartype : 'type' grammartypevalue ;
 
@@ -82,13 +82,17 @@ instanceattributeoperator : '='
                  
 instanceattrkey : ID ;
 
-instanceattrval  : ID 
-                 | NUM
+instanceattrval  :  NUM
                  | Binstr2int
                  | STRING_Note
-                 | expr_val;
+                 | expr_val
+                 | Boolean
+                 | ID;
                  
 Binstr2int : 'binstr2int' '(' ID ')';
+
+Boolean : 'True'
+        | 'False';
 
 instanceports : '(' instanceport  (',' instanceport)*?')';
 

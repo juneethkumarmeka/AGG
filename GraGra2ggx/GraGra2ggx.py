@@ -113,13 +113,17 @@ class GraGra2ggxWriter:
             file : filename with .ggx extension
             GraGra: Graph Grammar : GraGra
     """
-    def __init__(self,file,GraGra,Tags = {}):
+    def __init__(self,file,GraGra,*,Tags = {},packages = []):
         self.file = file 
         self.GraGra = GraGra 
         self.Tags = Tags
         self.ID = ID_Generation() # ID's Genertions Instatiation
+        self.packages = packages 
     
     
+    def addPackage(self,package): 
+        self.packages.append(package)
+        
     def graphwriter(self,GraphTag,Parent,Parameters = []):
         """
             graphwriter Method converts the GraphTags to the ggx format and 
@@ -320,7 +324,12 @@ class GraGra2ggxWriter:
         for each in sequenceTag.getSequence():
             subsequenceTag = CreateTag("Subsequence",sequencewriterTag.getTag(),iterations = each[1])
             self.subsequencewriter(each[0],subsequenceTag)
-            
+    
+    def writeTags(self,parent,packages = None):
+        tags = WriteTaggedValue(self.Tags["GTS"])
+        for eachPackage in packages:
+            tags.addPackage(eachPackage)
+        
             
         
     def __call__(self):
@@ -328,7 +337,8 @@ class GraGra2ggxWriter:
         self.Tags["Document"] = CreateTag("Document", root.getTag(),version = "1.0") # Adding the Document Tag 
         self.Tags["GTS"] = CreateTag("GraphTransformationSystem",self.Tags["Document"].getTag(),ID =self.ID(),
                        directed = "true",name = self.GraGra.getName(),parallel = "true") # Adding the GraphTransformation Tag 
-        WriteTaggedValue(self.Tags["GTS"]) # Adding all the Default Tagged values 
+        # WriteTaggedValue(self.Tags["GTS"]) # Adding all the Default Tagged values 
+        self.writeTags(self.Tags["GTS"],self.packages) # Adding all the Default Tagged values 
         self.Tags["Types"] = CreateTag("Types",self.Tags["GTS"].getTag()) # Adding Types Tag 
         self.Tags["NodeType"] = {}
         

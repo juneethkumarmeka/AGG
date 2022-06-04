@@ -75,9 +75,10 @@ class WriteTaggedValue:
         
     """
     def __init__(self,GT):
-        T1 = CreateTag("TaggedValue", GT.getTag(), Tag = "AttrHandler", TagValue = "Java Expr")
-        CreateTag("TaggedValue", T1.getTag(), Tag = "Package", TagValue = "java.lang")
-        CreateTag("TaggedValue", T1.getTag(), Tag = "Package", TagValue = "java.util")
+        self.T1 = CreateTag("TaggedValue", GT.getTag(), Tag = "AttrHandler", TagValue = "Java Expr")
+        CreateTag("TaggedValue", self.T1.getTag(), Tag = "Package", TagValue = "java.lang")
+        CreateTag("TaggedValue", self.T1.getTag(), Tag = "Package", TagValue = "java.util")
+        # CreateTag("TaggedValue", self.T1.getTag(), Tag = "Package", TagValue = "Integer.parseInt")
         CreateTag("TaggedValue", GT.getTag(), Tag = "CSP", TagValue = "true")
         CreateTag("TaggedValue", GT.getTag(), Tag = "injective", TagValue = "true")
         CreateTag("TaggedValue", GT.getTag(), Tag = "dangling", TagValue = "true")
@@ -89,6 +90,9 @@ class WriteTaggedValue:
         CreateTag("TaggedValue", GT.getTag(), Tag = "breakAllLayer", TagValue = "true")
         CreateTag("TaggedValue", GT.getTag(), Tag = "showGraphAfterStep", TagValue = "true")
         CreateTag("TaggedValue", GT.getTag(), Tag = "TypeGraphLevel", TagValue = "DISABLED")
+        
+    def addPackage(self,name):
+        CreateTag("TaggedValue", self.T1.getTag(), Tag = "Package", TagValue = name)
         
         
         

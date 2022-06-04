@@ -11,44 +11,44 @@ module Memory {
 	
 	rule Decoder_Main {
 		sub {
-			U1 Decoder[bit == bit1 , out1_val == string1 , out2_val == string2 , cl = true , nl = false ];
+			U1 Decoder[bit == bit1 , out1_val == string1 , out2_val == string2 , cl = True , nl = False ];
 		}
 		
-		U1[cl = false] ;
-		add U2 Decoder[bit = bit1+1 , out1_val = string1+"0" , out2_val = string1+"1" , cl = false , nl = true ](U1.OUT1 -> EN);
-		add U3 Decoder[bit = bit1+1 , out1_val = string2+"0" , out2_val = string2+"1" , cl = false , nl = true ](U1.OUT2 -> EN);
+		U1[cl = False] ;
+		add U2 Decoder[bit = bit1+1 , out1_val = string1+"0" , out2_val = string1+"1" , cl = False , nl = True ](U1.OUT1 -> EN);
+		add U3 Decoder[bit = bit1+1 , out1_val = string2+"0" , out2_val = string2+"1" , cl = False , nl = True ](U1.OUT2 -> EN);
 	}
 	
 	rule Change_Level {
 		sub {
-			U1 Decoder[bit == bit1 , out1_val == string1 , out2_val == string2 , cl = false , nl = true ];
+			U1 Decoder[bit == bit1 , out1_val == string1 , out2_val == string2 , cl = False , nl = True ];
 		}
 		
-		U1[cl = true , nl = false ];
+		U1[cl = True , nl = False ];
 	}
 	
 	rule Row_Decoder {
 		sub {
-			U1 Decoder[bit == bit1 , out1_val == string1 , out2_val == string2 , cl = true , nl = false , type_ = "none"];
+			U1 Decoder[bit == bit1 , out1_val == string1 , out2_val == string2 , cl = True , nl = False , type_ = "none"];
 		}
 		
-		U1[cl = false , nl = false , out1_pin = binstr2int(string1), out2_pin = binstr2int(string2), type_ = "row", cl = false ];
+		U1[cl = False , nl = False , out1_pin = binstr2int(string1), out2_pin = binstr2int(string2), type_ = "row", cl = False ];
 	}
 	
 	rule Column_Decoder {
 		sub {
-			U1 Decoder[bit == bit1 , out1_val == string1 , out2_val == string2 , cl = true , nl = false , type_ = "none"];
+			U1 Decoder[bit == bit1 , out1_val == string1 , out2_val == string2 , cl = True , nl = False , type_ = "none"];
 		}
 		
-		U1[cl = false , nl = false , out1_pin = binstr2int(string1), out2_pin = binstr2int(string2), type_ = "col", cl = false ];
+		U1[cl = False , nl = False , out1_pin = binstr2int(string1), out2_pin = binstr2int(string2), type_ = "col", cl = False ];
 	}
 	
 	rule Row_Decoder_Connect_1 {
 		sub {
-			U1 Decoder[out1_pin == out1_pin_no , out2_pin == out2_pin_no , cl = false , nl = false , type_ = "row"];
-			U2 RAM [row == out1_pin_no, rowconn = false ] ;
+			U1 Decoder[out1_pin == out1_pin_no , out2_pin == out2_pin_no , cl = False , nl = False , type_ = "row"];
+			U2 RAM [row == out1_pin_no, rowconn = False ] ;
 		}
-		U2[rowconn = true ]; 
+		U2[rowconn = True ]; 
 		add U2 (U1.OUT1 -> RE);
 	
 	}
@@ -56,20 +56,20 @@ module Memory {
 	
 	rule Row_Decoder_Connect_2 {
 		sub {
-			U1 Decoder[out1_pin == out1_pin_no , out2_pin == out2_pin_no , cl = false , nl = false , type_ = "row"];
-			U2 RAM [row = out2_pin_no, rowconn = false ] ;
+			U1 Decoder[out1_pin == out1_pin_no , out2_pin == out2_pin_no , cl = False , nl = False , type_ = "row"];
+			U2 RAM [row = out2_pin_no, rowconn = False ] ;
 		}
-		U2[rowconn = true ]; 
+		U2[rowconn = True ]; 
 		add U2 (U1.OUT1 -> RE);
 	
 	}
 	
 	rule Col_Decoder_Connect_1 {
 		sub {
-			U1 Decoder[out1_pin == out1_pin_no , out2_pin == out2_pin_no , cl = false , nl = false , type_ = "col"];
-			U2 RAM [col = out1_pin_no, colconn = false ] ;
+			U1 Decoder[out1_pin == out1_pin_no , out2_pin == out2_pin_no , cl = False , nl = False , type_ = "col"];
+			U2 RAM [col = out1_pin_no, colconn = False ] ;
 		}
-		U2[rowconn = true ]; 
+		U2[rowconn = True ]; 
 		add U2(U1.OUT1 -> CE);
 	
 	}
@@ -77,40 +77,40 @@ module Memory {
 	
 	rule Col_Decoder_Connect_2 {
 		sub {
-			U1 Decoder[out1_pin == out1_pin_no , out2_pin == out2_pin_no , cl = false , nl = false , type_ = "col"];
-			U2 RAM [col = out2_pin_no, colconn = false ] ;
+			U1 Decoder[out1_pin == out1_pin_no , out2_pin == out2_pin_no , cl = False , nl = False , type_ = "col"];
+			U2 RAM [col = out2_pin_no, colconn = False ] ;
 		}
-		U2[colconn = true ];
+		U2[colconn = True ];
 		add U2(U1.OUT1 -> CE);
 	
 	}
 	
 	rule RAM_Init {
 		sub {}
-		add U1 RAM[row = 0 , col = 0 , cc = true , rowconn = false , colconn = false ];	
+		add U1 RAM[row = 0 , col = 0 , cc = True , rowconn = False , colconn = False ];	
 	}
 	
 	rule RAM_Row {
 		sub {
-			U1 RAM[row == r , col == c , cc = true , rowconn = false  , colconn = false ];
+			U1 RAM[row == r , col == c , cc = True , rowconn = False  , colconn = False ];
 		}
-		add U2 RAM[row = r+1 , col = c , cc = true , rowconn = false  , colconn = false ];
-		U1[cc = false ];
+		add U2 RAM[row = r+1 , col = c , cc = True , rowconn = False  , colconn = False ];
+		U1[cc = False ];
 	}
 	
 	rule RAM_Col {
 		sub {
-			U1 RAM[row == r , col == c , cc = true , rowconn = false  , colconn = false ];
+			U1 RAM[row == r , col == c , cc = True , rowconn = False  , colconn = False ];
 		}
-		add U2 RAM[row = 0 , col = c+1 , cc = true , rowconn = false  , colconn = false ];
-		U1[cc = false ];
+		add U2 RAM[row = 0 , col = c+1 , cc = True , rowconn = False  , colconn = False ];
+		U1[cc = False ];
 	}
 	
 	rule Termination {
 		sub {
-			U1 RAM[row == r, col == c, cc = true ];
+			U1 RAM[row == r, col == c, cc = True ];
 		}
-		U1[cc = false , rowconn = false , colconn = false ]; 
+		U1[cc = False , rowconn = False , colconn = False ]; 
 		
 	
 	}
