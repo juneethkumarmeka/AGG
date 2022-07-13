@@ -21,15 +21,15 @@ class LoadGGX:
             raise Exception("{} not found".format(file))
     
     def __call__(self):
-        # os.system('java -Xmx10g -XX:+UseParallelGC -Dfile.encoding=UTF-8 \
-        #           -classpath "AGG/bin" \
-        #           agg_execution.Importing {}'.format(self.file))
-        os.system('java -jar AGG.jar {}'.format(self.file))
+        os.system('java -Xmx10g -XX:+UseParallelGC -Dfile.encoding=UTF-8 \
+                  -classpath "AGG/bin" \
+                  agg_execution.Importing {}'.format(self.file))
+        # os.system('java -jar AGG.jar {}'.format(self.file))
 #-----------------------------------------------------------------------------#
 
 #Testing
 #-----------------------------------------------------------------------------#
 # LoadGGX("Level_Based_Generator.ggx")()
-# LoadGGX("gfg.ggx")()
+# LoadGGX("module.ggx")()
 #-----------------------------------------------------------------------------#
 
