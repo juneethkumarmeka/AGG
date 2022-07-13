@@ -90,9 +90,12 @@ class GGX2Networkx:
                                 nodetypedata.addGateName(nodetypedata.getNodeName())
                             else:
                                 for eachlevel2 in each:
-                                    if(eachlevel2.attrib["type"] == nodetypedata.getGateID()):
-                                        gatename = str(eachlevel2[0][0].text).lower()
-                                        nodetypedata.addGateName(gatename)
+                                    try: 
+                                        if(eachlevel2.attrib["type"] == nodetypedata.getGateID()):
+                                            gatename = str(eachlevel2[0][0].text).lower()
+                                            nodetypedata.addGateName(gatename)
+                                    except: 
+                                        pass 
                         
                             self.graph.add_node(nodename,type = nodetypedata.getGateName())
                             
@@ -112,7 +115,11 @@ class GGX2Networkx:
 
 #Testing
 #-----------------------------------------------------------------------------#
-# g1 = GGX2Networkx("LevelConnectionBasedGenerator_out.ggx")
+# from Networkx2Verilog import Networkx2Verilog
+# g1 = GGX2Networkx("AdvancedLevelBasedV5_out.ggx")
+# graph = g1.getGraph()
+# Networkx2Verilog(graph, "Juneeth10000", "Juneeth10000.v")
+# Networkx2Verilog(graph, "Juneeth10000", "Juneeth10000.v",not_change_enable=True)
 # graph = g1.getGraph()
 # nx.draw(graph,with_labels = True)
 #-----------------------------------------------------------------------------#
