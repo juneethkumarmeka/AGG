@@ -166,7 +166,12 @@ class Graph:
                 instanceAttrObj.addKey(key)
                 instanceAttrObj.addVal(val)
                 currentInstance.delInstanceAttr(instanceAttrObj)
-            self.instances[name] = currentInstance
+            portCount = len(currentInstance.getInstancePorts()) 
+            attrCount = len(currentInstance.getInstanceAttrs().keys())
+            if portCount == 0 and attrCount == 0:
+                del self.instances[name]
+            else : 
+                self.instances[name] = currentInstance
         except: 
             raise Exception("The {} is not available for deleting".format(name))
     
@@ -267,11 +272,12 @@ class Instance:
             target = "{}.{}".format(self.instanceName,target)
         self.instancePorts.append((source,target))
     
-    def delInstanceAttr(self,name): 
+    def delInstanceAttr(self,attrObj): 
+        key,val = attrObj.items()
         try:
-            del self.instanceAttr[name]
+            del self.instanceAttr[key]
         except: 
-            raise Exception("{} is not having the attribute {} to delete".format(self.instanceName,name))
+            raise Exception("{} is not having the attribute {} to delete".format(self.instanceName,key))
     
     def delInstancePort(self,instancePort):
         source,target = instancePort.items()

@@ -503,6 +503,7 @@ class AGL2GGX:
 
 #Testing
 #-----------------------------------------------------------------------------#
-AGL2GGX("./Memory_V2.txt")(["Integer.parseInt","Integer.toBinaryString"])
+# AGL2GGX("./RULES_GGX.txt")(["Integer.parseInt","Integer.toBinaryString"])
+# AGL2GGX("./RULES_GGX.txt")()
 #-----------------------------------------------------------------------------#
 
