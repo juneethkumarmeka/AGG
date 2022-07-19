@@ -504,6 +504,6 @@ class AGL2GGX:
 #Testing
 #-----------------------------------------------------------------------------#
 # AGL2GGX("./RULES_GGX.txt")(["Integer.parseInt","Integer.toBinaryString"])
-# AGL2GGX("./RULES_GGX.txt")()
+AGL2GGX("./converted_rules.txt")()
 #-----------------------------------------------------------------------------#
 

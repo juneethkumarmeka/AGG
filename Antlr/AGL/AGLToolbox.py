@@ -285,7 +285,7 @@ class Instance:
             source = "{}.{}".format(self.instanceName,source)
         if len(target.split(".")) == 1:
             target = "{}.{}".format(self.instanceName,target)
-        for eachport in self.instacePorts: 
+        for eachport in self.instancePorts: 
             if source == eachport[0] and target == eachport[1]:
                 index = self.instancePorts.index(eachport)
                 self.instancePorts.pop(index)
