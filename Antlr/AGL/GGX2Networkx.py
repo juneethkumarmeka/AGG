@@ -88,15 +88,15 @@ class GGX2Networkx:
                             nodename = eachlevel2.attrib["name"].split("%")[0]
                             self.nodeTypes[nodeID].addNodeName(nodename)
                             for eachlevel3 in eachlevel2:
-                                if (eachlevel3.tag == "AttrType" and eachlevel3.attrib["attrname"] == "gateType") :
-                                    gateID = eachlevel3.attrib["ID"]
-                                    self.nodeTypes[nodeID].addGateID(gateID)
-                                    break
+                                if (eachlevel3.tag == "AttrType"):
+                                    if eachlevel3.attrib["attrname"] == "gateType" :
+                                        gateID = eachlevel3.attrib["ID"]
+                                        self.nodeTypes[nodeID].addGateID(gateID)
                                 
-                                if (eachlevel3.tag == "AttrType" and eachlevel3.attrib["attrname"] == "isInstance") :
-                                    isInstanceID = eachlevel3.attrib["ID"]
-                                    self.nodeTypes[nodeID].addGateInstanceID(isInstanceID)
-                                    break
+                                    if (eachlevel3.attrib["attrname"] == "isInstance") :
+                                        isInstanceID = eachlevel3.attrib["ID"]
+                                        self.nodeTypes[nodeID].addGateInstanceID(isInstanceID)
+                                    
                                 
                                     
                             
