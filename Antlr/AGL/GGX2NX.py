@@ -21,6 +21,7 @@ class NodeStorage:
         self.gateID =  None 
         self.gateInstanceId = None 
         self.gateInstanceVal = None 
+        self.originalGateName = None 
         
     def addNodeName(self,nodename):
         self.nodename  = nodename
@@ -55,21 +56,29 @@ class NodeStorage:
     def getGateInstaceVal(self): 
         return self.gateInstanceVal
     
+    def addOriginalGateType(self,val): 
+        self.originalGateName = val 
+        
+    def getOriginalGateType(self): 
+        return self.originalGateName
+        
+    
     
         
     
         
-class GGX2Networkx:
+class GGX2NX:
     """
         Extracts the Host Graph of the GGX file 
         input : 
             ggxfile : file name 
     """
-    def __init__(self,ggxfile):
+    def __init__(self,ggxfile,portOrder= None):
         self.file = ggxfile 
         self.nodeTypes = {}
         self.graph = nx.DiGraph()
         self.parsing()
+        self.portOrder = portOrder
     
     def parsing(self):
         """
@@ -87,6 +96,7 @@ class GGX2Networkx:
                             self.nodeTypes[nodeID] = NodeStorage(nodeID)
                             nodename = eachlevel2.attrib["name"].split("%")[0]
                             self.nodeTypes[nodeID].addNodeName(nodename)
+                            self.nodeTypes[nodeID].addOriginalGateType(nodename)
                             for eachlevel3 in eachlevel2:
                                 if (eachlevel3.tag == "AttrType"):
                                     if eachlevel3.attrib["attrname"] == "gateType" :
@@ -112,6 +122,7 @@ class GGX2Networkx:
                                 for eachlevel2 in each:
                                     try: 
                                         if(eachlevel2.attrib["type"] == nodetypedata.getGateID()):
+                                            
                                             gatename = str(eachlevel2[0][0].text).lower()
                                             nodetypedata.addGateName(gatename)
                                     except: 
@@ -124,7 +135,8 @@ class GGX2Networkx:
                                     elif isInstanceVal == "false": 
                                         isInstanceVal = False
                                     nodetypedata.addGateInstanceVal(isInstanceVal)
-                            self.graph.add_node(nodename,type = nodetypedata.getGateName(),isInstance = nodetypedata.getGateInstaceVal())
+                            originalName = nodetypedata.getOriginalGateType()
+                            self.graph.add_node(nodename,type = nodetypedata.getGateName(),name = originalName,isInstance = nodetypedata.getGateInstaceVal())
                         elif each.tag == "Edge":
                             source = each.attrib["source"]
                             target = each.attrib["target"]
@@ -141,9 +153,10 @@ class GGX2Networkx:
 
 #Testing
 #-----------------------------------------------------------------------------#
-# from Networkx2Verilog import Networkx2Verilog
-# g1 = GGX2Networkx("gfg_out.ggx")
+
+# g1 = GGX2NX("gfg_out.ggx")
 # graph = g1.getGraph()
+# print(graph)
 # Networkx2Verilog(graph, "gfg", "gfg.v",not_change_enable=False)
 # graph = g1.getGraph()
 # nx.draw(graph,with_labels = True)

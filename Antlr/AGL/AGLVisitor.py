@@ -184,11 +184,6 @@ class AGLVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by AGLParser#portname.
-    def visitPortname(self, ctx:AGLParser.PortnameContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by AGLParser#connections.
     def visitConnections(self, ctx:AGLParser.ConnectionsContext):
         return self.visitChildren(ctx)
@@ -206,6 +201,11 @@ class AGLVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by AGLParser#target.
     def visitTarget(self, ctx:AGLParser.TargetContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by AGLParser#portname.
+    def visitPortname(self, ctx:AGLParser.PortnameContext):
         return self.visitChildren(ctx)
 
 
@@ -294,6 +294,11 @@ class AGLVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by AGLParser#conditionalVal.
+    def visitConditionalVal(self, ctx:AGLParser.ConditionalValContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by AGLParser#expr_val.
     def visitExpr_val(self, ctx:AGLParser.Expr_valContext):
         return self.visitChildren(ctx)
@@ -301,6 +306,11 @@ class AGLVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by AGLParser#operators.
     def visitOperators(self, ctx:AGLParser.OperatorsContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by AGLParser#conditionaloperators.
+    def visitConditionaloperators(self, ctx:AGLParser.ConditionaloperatorsContext):
         return self.visitChildren(ctx)
 
 

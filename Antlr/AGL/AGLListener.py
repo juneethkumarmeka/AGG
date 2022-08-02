@@ -323,15 +323,6 @@ class AGLListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by AGLParser#portname.
-    def enterPortname(self, ctx:AGLParser.PortnameContext):
-        pass
-
-    # Exit a parse tree produced by AGLParser#portname.
-    def exitPortname(self, ctx:AGLParser.PortnameContext):
-        pass
-
-
     # Enter a parse tree produced by AGLParser#connections.
     def enterConnections(self, ctx:AGLParser.ConnectionsContext):
         pass
@@ -365,6 +356,15 @@ class AGLListener(ParseTreeListener):
 
     # Exit a parse tree produced by AGLParser#target.
     def exitTarget(self, ctx:AGLParser.TargetContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#portname.
+    def enterPortname(self, ctx:AGLParser.PortnameContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#portname.
+    def exitPortname(self, ctx:AGLParser.PortnameContext):
         pass
 
 
@@ -521,6 +521,15 @@ class AGLListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by AGLParser#conditionalVal.
+    def enterConditionalVal(self, ctx:AGLParser.ConditionalValContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#conditionalVal.
+    def exitConditionalVal(self, ctx:AGLParser.ConditionalValContext):
+        pass
+
+
     # Enter a parse tree produced by AGLParser#expr_val.
     def enterExpr_val(self, ctx:AGLParser.Expr_valContext):
         pass
@@ -536,6 +545,15 @@ class AGLListener(ParseTreeListener):
 
     # Exit a parse tree produced by AGLParser#operators.
     def exitOperators(self, ctx:AGLParser.OperatorsContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#conditionaloperators.
+    def enterConditionaloperators(self, ctx:AGLParser.ConditionaloperatorsContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#conditionaloperators.
+    def exitConditionaloperators(self, ctx:AGLParser.ConditionaloperatorsContext):
         pass
 
 

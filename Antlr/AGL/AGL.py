@@ -41,6 +41,16 @@ from GraGra2ggx.TagCreator import WriteTaggedValue
 import networkx as nx
 from GraGra2ggx.Tags import *
 from copy import deepcopy
+import os 
+if __name__ is not None and "." in __name__:
+    from .GGX2NX import GGX2NX
+else : 
+    from GGX2NX import GGX2NX
+    
+if __name__ is not None and "." in __name__:
+    from .NX2Verilog import NX2Verilog
+else: 
+    from NX2Verilog import NX2Verilog
 
 
 #-----------------------------------------------------------------------------#
@@ -114,6 +124,14 @@ class AGLData(AGLVisitor):
         return self.visitChildren(ctx)
     
     def visitInstancetype(self, ctx:AGLParser.InstancetypeContext):
+        try : 
+            self.defines[ctx.getText()] 
+        except : 
+            raise Exception("Rulename : {} Instancename : {}  doesnot have Instancetype  : {} in defines".format(
+                            self.ruleName,
+                            self.currentInstance.getInstanceName(),
+                            ctx.getText()))
+            
         self.currentInstance.addInstanceType(ctx.getText())
         return self.visitChildren(ctx)
     
@@ -143,9 +161,9 @@ class AGLData(AGLVisitor):
         return self.visitChildren(ctx)
     
     def visitInstanceattrval(self, ctx:AGLParser.InstanceattrvalContext):
-        if ctx.getText() == "True":
+        if ctx.getText().capitalize() == "True":
             val= True
-        elif ctx.getText() == "False":
+        elif ctx.getText().capitalize() == "False":
             val= False
         else: 
             val = ctx.getText()
@@ -265,7 +283,7 @@ class AGLData(AGLVisitor):
             if self.ruleName:
                 targetInstanceType = self.rules[self.ruleName].getInstanceType()[targetInstanceName]
                 
-            targetInstanceObj = self.rules[self.ruleName].getInstances()[targetInstance]
+            # targetInstanceObj = self.rules[self.ruleName].getInstances()[targetInstance]
             ports = self.defines[targetInstanceType].getPorts()
         try:
             if ports[target] == "out":
@@ -316,7 +334,9 @@ class AGLData(AGLVisitor):
         return self.visitChildren(ctx)
     
     def visitExpr(self, ctx:AGLParser.ExprContext):
-        self.rules[self.ruleName].addAC(ctx.getText())
+        expr = ctx.getText().split(";")[:-1]
+        for each in expr: 
+            self.rules[self.ruleName].addAC(each)
         return self.visitChildren(ctx)
     
     
@@ -414,20 +434,27 @@ class AGLData(AGLVisitor):
         visitor = cls()
         output = visitor.visit(tree)
         return visitor.getAGL() # all the data in the parser is stored in data 
-        
 
+
+    
 class AGL2GGX:
     def __init__(self,AGLfile): 
+        self.file = AGLfile 
         self.aglData = AGLData.Parsing(AGLfile)
+        self.moduleName = self.aglData.moduleName
         self.gragra = ggx.GraGra("GraGra")
         self.rules = {}
         self.packages = []
+        self.portOders = {}
+        self.addDefines()
     
     def addPackages(self,package): 
         self.packages.append(package)
         
     def addDefines(self):
         for nodeType,define in self.aglData.defines.items(): 
+            
+            self.portOders[nodeType] = [] 
             self.gragra.addNodeType(nodeType)
             for attr, attrtype in define.getAttributes().items():
                 self.gragra.addNodeTypeAttribute(nodeType, attr, attrtype)
@@ -435,6 +462,11 @@ class AGL2GGX:
             for port,type_ in define.getPorts().items(): 
                 self.gragra.addNodeType("{}_{}".format(nodeType,port))
                 self.gragra.addNodeTypeAttribute("{}_{}".format(nodeType,port),"isInstance","boolean")
+            for each in define.getPortOrder(): 
+                val = each.split(":")
+                self.portOders[nodeType].append(DefinePortData(nodeType,val[0],val[1]))
+        
+            
                 
                 
     def addHost(self):
@@ -490,20 +522,46 @@ class AGL2GGX:
                     
                     
                     
-    def __call__(self,outFileName="gfg",packages= None):
-        self.addDefines()
+    def __call__(self,packages= None):
         self.addHost()
         self.addRules()
         self.addRuleSequences()
+        directory = os.path.dirname(self.file)
+        self.outfile = os.path.join(directory,"{}.ggx".format(self.moduleName))
+        
         if packages == None: 
-            ggxWriter("{}.ggx".format(outFileName),self.gragra,packages= self.packages)()
+            # ggxWriter("{}.ggx".format(self.moduleName),self.gragra,packages= self.packages)()
+            ggxWriter(self.outfile,self.gragra,packages= self.packages)()
         else: 
-            ggxWriter("{}.ggx".format(outFileName),self.gragra,packages= packages)()
+            # ggxWriter("{}.ggx".format(self.moduleName),self.gragra,packages= packages)()
+            ggxWriter(self.outfile,self.gragra,packages= packages)()
+            
+    def getPortOder(self) : 
+        return self.portOders
+    
+    def getOutfilePath(self): 
+        return self.outfile
+    
+class GGX2Verilog: 
+    def __init__(self,inputfile,outputfile,portOrder=None):
+        g1 = GGX2NX(inputfile)
+        graph = g1.getGraph()
+        filename  = os.path.basename(outputfile)
+        modulename = os.path.splitext(filename)[0]
+        NX2Verilog(graph, modulename,outputfile,portOrder = portOrder)
+        
+        
+    
 #-----------------------------------------------------------------------------#
 
 #Testing
 #-----------------------------------------------------------------------------#
 # AGL2GGX("./RULES_GGX.txt")(["Integer.parseInt","Integer.toBinaryString"])
-AGL2GGX("./converted_rules.txt")()
+# AGL2GGX("./converted_rules.txt")()
+# from GGX2Networkx import GGX2Networkx 
+# g1 = GGX2Networkx("gfg_out.ggx")
+# graph = g1.getGraph()
+# GGX2Verilog("gfg_out.ggx","gfg.v")
+
 #-----------------------------------------------------------------------------#
 

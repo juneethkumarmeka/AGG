@@ -19,11 +19,23 @@ class colonsplit:
         attr = attr.split(":")
         return attr[0],attr[1]
     
+class DefinePortData: 
+    def __init__(self,nodeType,portName,portType): 
+        self.nodeType = nodeType
+        self.portName = portName
+        self.portType = portType
+    def getNodeType(self): 
+        return self.nodeType
+    def getPortName(self): 
+        return self.portName
+    def getPortType(self): 
+        return self.portType    
     
 class Define:
     def __init__(self):
         self.attributes = {}
         self.ports = {}
+        self.portOrder = []
         
     def addAttribute(self,attr):
         key,value = colonsplit(attr)
@@ -32,12 +44,16 @@ class Define:
     def addPort(self,port):
         key,value = colonsplit(port)
         self.ports[key] = value
+        self.portOrder.append(port)
         
     def getAttributes(self):
         return self.attributes 
     
     def getPorts(self):
         return self.ports 
+    
+    def getPortOrder(self): 
+        return self.portOrder 
 
 
 class Rule:

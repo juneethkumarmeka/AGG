@@ -5,9 +5,9 @@ start : 'module' modulename '{'(grammartype)? definerules (definerules)*? (mainr
 grammartype : 'type' grammartypevalue ;
 
 grammartypevalue : 'Symmetric'
-            | 'symmetic'
-            | 'non-symmetic'
-            | 'Non-Symmetic';
+            | 'symmetric'
+            | 'non-symmetric'
+            | 'Non-Symmetric';
             
 definerules : DEFINE  nodetype '[' attributerules ']' portdeclaration semicolon
             | DEFINE  nodetype '[' attributerules ']' semicolon
@@ -51,7 +51,7 @@ subgraph : 'sub' leftLHSbrace instances rightLHSbrace;
 
 nac : 'nac' leftNACbrace modifyingsubs rightNACbrace;
 
-ac : 'ac' leftACbrace expr rightACbrace;
+ac : 'ac' leftACbrace (expr)*? rightACbrace;
 
 
 instances : (instance)*?
@@ -61,7 +61,8 @@ instances : (instance)*?
 instance : instancename instancetype instanceattributes instanceports instancesemicolon
             | instancename instancetype instanceattributes instancesemicolon 
             | instancename instancetype instanceports instancesemicolon 
-            | instancename instanceports instancesemicolon             
+            | instancename instanceports instancesemicolon 
+            | instancename instancesemicolon            
             ;
 instanceconnection: connections connectionsemicolon ;
 
@@ -103,16 +104,18 @@ instanceportsource : portname ;
 instanceporttarget : portname ; 
 
 
-portname : ID'.'ID
-        | ID ;
+
 
 connections : source '->' target;
 
 connectionsemicolon : ';';
 
-source : ID;
+source : portname;
 
-target : ID;
+target : portname;
+
+portname : ID'.'ID
+        | ID ;
 
 
 modifyingsubs : modifyingsub (modifyingsub)*?;
@@ -154,18 +157,28 @@ rulenameinsequence : ID;
 ruleitercount : NUM
               | '*';
 
-expr : expr_val operators expr_val;
+expr : conditionalVal conditionaloperators conditionalVal semicolon;
+
+conditionalVal : ID 
+                | STRING_Note
+                | NUM 
+                | expr_val; 
 
 expr_val : ID 
          | ID operators ID 
          | ID operators STRING_Note
          | ID operators NUM;
+         
+         
 operators : '+'
           | '-'
           | '*'
-          | '/'
-          | '<'
+          | '/';
+          
+conditionaloperators : '<'
           | '>'   
+          | '<='   
+          | '>='   
           |  '==' 
           | '!=';
           
