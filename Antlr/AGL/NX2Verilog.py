@@ -67,6 +67,11 @@ class NX2Verilog:
                 if len(predecessors) == 0: 
                     self.inputs.append(successors[0])
                     self.nodeNames[successors[0]] = None 
+                    if self.instances[eachnode].get_type() == "input": 
+                        del self.instances[eachnode]
+                    else: 
+                        del self.instances[eachnode]
+                    
                     
                 # else: 
                 #     for eachpredecessor in predecessors: 
@@ -97,7 +102,9 @@ class NX2Verilog:
                     if portName in successorsTypes: 
                         index = successorsTypes.index(portName)
                         node = successors[index]
-                        self.instances[eachnode].addInstanceOrder(node)
+                        try:
+                            self.instances[eachnode].addInstanceOrder(node)
+                        except: pass 
                         self.nodeNames[node] = None 
                         
                     elif portName in predecessorsTypes: 
@@ -118,8 +125,8 @@ class NX2Verilog:
             i+=1 
                                     
         
-        if len(self.inputs) == 0: 
-            raise Exception("The circuit is not having any Input ports !!")
+        # if len(self.inputs) == 0: 
+        #     raise Exception("The circuit is not having any Input ports !!")
                 
     def writing(self):
         for each in self.nodeNames: 
