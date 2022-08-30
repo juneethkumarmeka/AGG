@@ -6,19 +6,12 @@ Project Name : Graph Grammar Attribute Benchmark Generator
 
 #Modules
 #-----------------------------------------------------------------------------#
-# from TagCreator import xml_writer
-# from TagCreator import CreateTag
-# from TagCreator import CreateText
-# from TagCreator import WriteTaggedValue
-# import networkx as nx
-# from Tags import GraphTags
 from GraGra2ggx.TagCreator import xml_writer
 from GraGra2ggx.TagCreator import CreateTag
 from GraGra2ggx.TagCreator import CreateText
 from GraGra2ggx.TagCreator import WriteTaggedValue
 import networkx as nx
 from GraGra2ggx.Tags import GraphTags
-
 #-----------------------------------------------------------------------------#
 
 #Source Code
@@ -336,7 +329,7 @@ class GraGra2ggxWriter:
         root = xml_writer()
         self.Tags["Document"] = CreateTag("Document", root.getTag(),version = "1.0") # Adding the Document Tag 
         self.Tags["GTS"] = CreateTag("GraphTransformationSystem",self.Tags["Document"].getTag(),ID =self.ID(),
-                       directed = "true",name = self.GraGra.getName(),parallel = "true") # Adding the GraphTransformation Tag 
+                       directed = "true",name = self.GraGra.getName(),parallel = "false") # Adding the GraphTransformation Tag 
         # WriteTaggedValue(self.Tags["GTS"]) # Adding all the Default Tagged values 
         self.writeTags(self.Tags["GTS"],self.packages) # Adding all the Default Tagged values 
         self.Tags["Types"] = CreateTag("Types",self.Tags["GTS"].getTag()) # Adding Types Tag 

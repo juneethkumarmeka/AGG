@@ -78,7 +78,6 @@ class WriteTaggedValue:
         self.T1 = CreateTag("TaggedValue", GT.getTag(), Tag = "AttrHandler", TagValue = "Java Expr")
         CreateTag("TaggedValue", self.T1.getTag(), Tag = "Package", TagValue = "java.lang")
         CreateTag("TaggedValue", self.T1.getTag(), Tag = "Package", TagValue = "java.util")
-        # CreateTag("TaggedValue", self.T1.getTag(), Tag = "Package", TagValue = "Integer.parseInt")
         CreateTag("TaggedValue", GT.getTag(), Tag = "CSP", TagValue = "true")
         CreateTag("TaggedValue", GT.getTag(), Tag = "injective", TagValue = "true")
         CreateTag("TaggedValue", GT.getTag(), Tag = "dangling", TagValue = "true")

@@ -13,7 +13,10 @@ Project Name : Attributed Graph Language
 
 #Source Code
 #-----------------------------------------------------------------------------#
-from .AGL import AGL
+from .AGL import AGL2GGX
+from .GGX2NX import GGX2NX
+from .NX2Verilog import NX2Verilog 
+from .AGL import GGX2Verilog
 #-----------------------------------------------------------------------------#
 
 #Testing
