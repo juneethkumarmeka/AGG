@@ -438,8 +438,9 @@ class AGLData(AGLVisitor):
 
     
 class AGL2GGX:
-    def __init__(self,AGLfile): 
+    def __init__(self,AGLfile,outputDir = None): 
         self.file = AGLfile 
+        self.outputDir = outputDir
         self.aglData = AGLData.Parsing(AGLfile)
         self.moduleName = self.aglData.moduleName
         self.gragra = ggx.GraGra("GraGra")
@@ -447,7 +448,17 @@ class AGL2GGX:
         self.packages = []
         self.portOders = {}
         self.addDefines()
+        
+    def addOuputDir(self,val): 
+        self.outputDir = val 
+        if not os.path.isdir(self.outputDir): 
+            os.mkdir(self.outputDir)
     
+    def checkOutputDir(self): 
+        if self.outputDir != None: 
+            if not os.path.isdir(self.outputDir): 
+                os.mkdir(self.outputDir)
+            
     def addPackages(self,package): 
         self.packages.append(package)
         
@@ -523,10 +534,15 @@ class AGL2GGX:
                     
                     
     def __call__(self,packages= None):
+        self.checkOutputDir()
         self.addHost()
         self.addRules()
         self.addRuleSequences()
-        directory = os.path.dirname(self.file)
+        if self.outputDir == None : 
+            directory = os.path.dirname(self.file)
+        else : 
+            directory = self.outputDir
+
         self.outfile = os.path.join(directory,"{}.ggx".format(self.moduleName))
         
         if packages == None: 
@@ -557,7 +573,7 @@ class GGX2Verilog:
 #Testing
 #-----------------------------------------------------------------------------#
 # AGL2GGX("./RULES_GGX.txt")(["Integer.parseInt","Integer.toBinaryString"])
-# AGL2GGX("./converted_rules.txt")()
+# AGL2GGX("./converted_rules.txt","jk")()
 # from GGX2Networkx import GGX2Networkx 
 # g1 = GGX2Networkx("gfg_out.ggx")
 # graph = g1.getGraph()
