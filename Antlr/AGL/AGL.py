@@ -161,40 +161,152 @@ class AGLData(AGLVisitor):
         return self.visitChildren(ctx)
     
     def visitInstanceattrval(self, ctx:AGLParser.InstanceattrvalContext):
-        if ctx.getText().capitalize() == "True":
-            val= True
-        elif ctx.getText().capitalize() == "False":
-            val= False
-        else: 
-            val = ctx.getText()
+        operator = ctx.parentCtx.children[1].getText()
+        assert not (not self.isLHS and operator == ":="),"The constrains operator ':=' cannot be used outside the sub block"
+        for eachChild in ctx.children: 
+            childType = type(eachChild).__name__
+            if childType == "TerminalNodeImpl": 
+                assert not(self.isLHS and operator == '='),"In Sub block,Assignment operator '=' cannot be used for constaints operator ':="
+                    
+                if ctx.Boolean(): 
+                    val = bool(ctx.getText())
+                if ctx.NUM(): 
+                    val = int(ctx.getText())
+                if ctx.ID() or ctx.STRING_Note(): 
+                    val = ctx.getText()
+                    
+                if self.isModifyAttr: 
+                    leftGraphInstances = self.rules[self.ruleName].getLHS().getInstances() 
+                    rightGraphInstances = self.rules[self.ruleName].getRHS().getInstances()
+                    leftGraphInstanceObj = leftGraphInstances[self.currentInstance.getInstanceName()]
+                    rightGraphInstanceObj = rightGraphInstances[self.currentInstance.getInstanceName()]
+                    instanceName = leftGraphInstanceObj.getInstanceName()
+                    instanceAttrName = self.currentInstanceAttr.items()[0]
+                    instanceAttrVal = "{}_{}".format(instanceName,instanceAttrName)
+                    try: 
+                        leftGraphInstanceObj.getInstanceAttrs()[self.currentInstanceAttr.items()[0]]
+                    except:
+                        instanceAttrObj = InstanceAttr(instanceAttrName,instanceAttrVal)
+                        leftGraphInstanceObj.addInstanceAttr(instanceAttrObj)
+                    try: 
+                        rightGraphInstanceObj.getInstanceAttrs()[self.currentInstanceAttr.items()[0]]
+                    except:
+                        instanceAttrObj = InstanceAttr(instanceAttrName,instanceAttrVal)
+                        rightGraphInstanceObj.addInstanceAttr(instanceAttrObj)
+                    
+                self.currentInstanceAttr.addVal(val)
+                self.currentInstance.addInstanceAttr(self.currentInstanceAttr)
+                
+            elif childType == "Expr_valContext":   
+                # print("Expr_val : ",ctx.getText())
+                pass 
             
-        if ctx.NUM():
-            val = int(val) 
-        
-        if ctx.Binstr2int():
-            matchobj = re.match(r'binstr2int\((.*)\)', val , re.M|re.I)
-            if matchobj : 
-                val = "Integer.parseInt({},2)".format(matchobj.group(1))
-            else: 
-                raise Exception("Please refer to string to binary conversion syntax")
+            elif childType == "Parametric_valContext": 
+                assert not(operator == ':='), "Constrains operator ':=' cannot be used for Assigments\
+                    use '=' for the assignment operation"
+                parametricChildren = ctx.children[0].children
+                string = ''
+                for eachChild in parametricChildren: 
+                    parametricChildType = type(eachChild).__name__
+                    if parametricChildType == "ParametricInstanceAttrvalContext": 
+                        (instanceName,instanceAttr) = eachChild.getText().split(".")
+                        string += "{}_{}".format(instanceName,instanceAttr)
+                    else : 
+                        string+= eachChild.getText()
+                self.currentInstanceAttr.addVal(string)
+                self.currentInstance.addInstanceAttr(self.currentInstanceAttr)
             
-        self.currentInstanceAttr.addVal(val)
-        self.currentInstance.addInstanceAttr(self.currentInstanceAttr)
+            elif childType == "Binstr2intContext": 
+                assert not(operator == ':='), "Constrains operator ':=' cannot be used for Assigments\
+                    use '=' for the assignment operation"
+                string = ''
+                for eachChild in ctx.children: 
+                    binStrChildType = type(eachChild).__name__
+                    if binStrChildType == "ParametricInstanceAttrvalContext": 
+                        (instanceName,instanceAttr) = eachChild.getText().split(".")
+                        string += "{}_{}".format(instanceName,instanceAttr)
+                    else : 
+                        string += eachChild.getText()
+                        
+                string = "Integer.parseInt({},2)".format(string)
+                
+                self.currentInstanceAttr.addVal(string)
+                self.currentInstance.addInstanceAttr(self.currentInstanceAttr)
+                    
+            
+                        
+                        
+                
+                
+                
         
+            
+        
+        # if ctx.binstr2int():
+        #     matchobj = re.match(r'binstr2int\((.*)\)', val , re.M|re.I)
+        #     if matchobj : 
+        #         val = "Integer.parseInt({},2)".format(matchobj.group(1))
+        #     else: 
+        #         raise Exception("Please refer to string to binary conversion syntax")
+            
+        # self.currentInstanceAttr.addVal(val)
+        # self.currentInstance.addInstanceAttr(self.currentInstanceAttr)
+        
+        # try:
+        #     definesAttr = self.defines[self.currentInstance.getInstanceType()].getAttributes()
+        # except:
+        #     raise Exception("Node type : {} is not defined".format(self.currentInstance.getInstanceType()))
+        # try:
+        #     dataType = definesAttr[self.currentInstanceAttr.items()[0]]
+        # except: 
+        #     raise Exception("Node type : {} is not having the attributes : {}".format(
+        #         self.currentInstance.getInstanceType(),self.currentInstanceAttr.items()[0]))
+            
+        # if  self.currentInstanceAttr.getOperator() == "==":
+        #     if self.isHostGraph == None :
+        #         self.rules[self.ruleName].addParameters(self.currentInstanceAttr.items()[1],dataType)
+        #     else : 
+        #         raise Exception("The Parameters cannot be assinged in Host")
+        return self.visitChildren(ctx)
+    
+    def visitParametricInstanceAttrval(self, ctx:AGLParser.ParametricInstanceAttrvalContext):
+        (instanceName,instanceAttr) = ctx.getText().split(".")
+        leftGraphInstances = self.rules[self.ruleName].getLHS().getInstances() 
+        rightGraphInstances = self.rules[self.ruleName].getRHS().getInstances() 
+        leftGraphInstanceObj = leftGraphInstances[instanceName]
+        rightGraphInstanceObj = rightGraphInstances[instanceName]
+        instanceType = leftGraphInstanceObj.getInstanceType()
         try:
-            definesAttr = self.defines[self.currentInstance.getInstanceType()].getAttributes()
+            definesAttr = self.defines[instanceType].getAttributes()
         except:
-            raise Exception("Node type : {} is not defined".format(self.currentInstance.getInstanceType()))
+            raise Exception("Node type : {} is not defined".format(instance.getInstanceType()))
+        
         try:
-            dataType = definesAttr[self.currentInstanceAttr.items()[0]]
+            dataType = definesAttr[instanceAttr]
         except: 
             raise Exception("Node type : {} is not having the attributes : {}".format(
-                self.currentInstance.getInstanceType(),self.currentInstanceAttr.items()[0]))
-        if  self.currentInstanceAttr.getOperator() == "==":
-            if self.isHostGraph == None :
-                self.rules[self.ruleName].addParameters(self.currentInstanceAttr.items()[1],dataType)
-            else : 
-                raise Exception("The Parameters cannot be assinged in Host")
+                instanceType,instanceAttr))
+        
+        string = "{}_{}".format(instanceName,instanceAttr)
+        
+        
+        if self.isHostGraph == None :
+            self.rules[self.ruleName].addParameters(string,dataType)
+        else : 
+            raise Exception("The Parameters cannot be assinged in Host")
+            
+        try: 
+            leftGraphInstanceObj.getInstanceAttrs()[instanceAttr]
+        except:
+            instanceAttrObj = InstanceAttr(instanceAttr,string)
+            leftGraphInstanceObj.addInstanceAttr(instanceAttrObj)
+            
+        try:
+            rightGraphInstanceObj.getInstanceAttrs()[instanceAttr]
+        except: 
+            instanceAttrObj = InstanceAttr(instanceAttr,string)
+            rightGraphInstanceObj.addInstanceAttr(instanceAttrObj)
+            
         return self.visitChildren(ctx)
     
     def visitAddinstances(self, ctx:AGLParser.AddinstancesContext):
@@ -334,9 +446,34 @@ class AGLData(AGLVisitor):
         return self.visitChildren(ctx)
     
     def visitExpr(self, ctx:AGLParser.ExprContext):
-        expr = ctx.getText().split(";")[:-1]
-        for each in expr: 
-            self.rules[self.ruleName].addAC(each)
+        # expr = ctx.getText().split(";")[:-1]
+        # for each in expr: 
+        #     self.rules[self.ruleName].addAC(each)
+        string = ""
+        for eachchild in  ctx.children: 
+            exprChildType = type(eachchild).__name__
+            
+            if exprChildType == "ConditionalValContext": 
+                condChildren = eachchild.children
+                for eachCondChildren in condChildren: 
+                    if type(eachCondChildren).__name__ != "Parametric_valContext": 
+                        string += eachCondChildren.getText()
+                    else: 
+                        for eachParaChildren in eachCondChildren.children : 
+                            if type(eachParaChildren).__name__ != "ParametricInstanceAttrvalContext": 
+                                string += eachParaChildren.getText()
+                            else : 
+                                (instanceName,instanceAttr) = eachParaChildren.getText().split(".")
+                                string += "{}_{}".format(instanceName,instanceAttr)
+                            
+            
+            elif exprChildType ==  "ConditionaloperatorsContext": 
+                string += eachchild.getText()
+                
+            elif exprChildType == "SemicolonContext": 
+                self.rules[self.ruleName].addAC(string)
+                string = ""
+            
         return self.visitChildren(ctx)
     
     
@@ -494,13 +631,13 @@ class AGL2GGX:
                 type_ = instance.getInstanceType()
                 ports = instance.getInstancePorts()
                 attr = instance.getInstanceAttrs()
-                # print("LHS : {}  type : {} port {} Attrs : {}".format(name,type_,ports,attr) )
+                print("LHS : {}  type : {} port {} Attrs : {}".format(name,type_,ports,attr) )
             for name,instance in rule.RHS.getInstances().items():
                 name = instance.getInstanceName()
                 type_ = instance.getInstanceType()
                 ports = instance.getInstancePorts()
                 attr = instance.getInstanceAttrs()
-                # print("RHS : {}  type : {} port {} Attrs : {}".format(name,type_,ports,attr) )
+                print("RHS : {}  type : {} port {} Attrs : {}".format(name,type_,ports,attr) )
             LHS = rule.LHS.graph2Nx()
             RHS = rule.RHS.graph2Nx()
             currentRule = RuleTags("{}".format(ruleName),LHS,RHS)
