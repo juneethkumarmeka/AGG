@@ -169,7 +169,12 @@ class AGLData(AGLVisitor):
                 assert not(self.isLHS and operator == '='),"In Sub block,Assignment operator '=' cannot be used for constaints operator ':="
                     
                 if ctx.Boolean(): 
-                    val = bool(ctx.getText())
+                    val = ctx.getText()
+                    if val == "True" : 
+                        val = True
+                    elif val == "False":
+                        val = False 
+                        
                 if ctx.NUM(): 
                     val = int(ctx.getText())
                 if ctx.ID() or ctx.STRING_Note(): 
@@ -193,7 +198,7 @@ class AGLData(AGLVisitor):
                     except:
                         instanceAttrObj = InstanceAttr(instanceAttrName,instanceAttrVal)
                         rightGraphInstanceObj.addInstanceAttr(instanceAttrObj)
-                    
+                
                 self.currentInstanceAttr.addVal(val)
                 self.currentInstance.addInstanceAttr(self.currentInstanceAttr)
                 
