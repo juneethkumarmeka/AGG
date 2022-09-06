@@ -198,8 +198,7 @@ class AGLData(AGLVisitor):
                 self.currentInstance.addInstanceAttr(self.currentInstanceAttr)
                 
             elif childType == "Expr_valContext":   
-                # print("Expr_val : ",ctx.getText())
-                pass 
+                raise Exception("The instance Attribute value cannot be of this form : {}".format(ctx.getText()))
             
             elif childType == "Parametric_valContext": 
                 assert not(operator == ':='), "Constrains operator ':=' cannot be used for Assigments\
@@ -233,40 +232,6 @@ class AGLData(AGLVisitor):
                 self.currentInstanceAttr.addVal(string)
                 self.currentInstance.addInstanceAttr(self.currentInstanceAttr)
                     
-            
-                        
-                        
-                
-                
-                
-        
-            
-        
-        # if ctx.binstr2int():
-        #     matchobj = re.match(r'binstr2int\((.*)\)', val , re.M|re.I)
-        #     if matchobj : 
-        #         val = "Integer.parseInt({},2)".format(matchobj.group(1))
-        #     else: 
-        #         raise Exception("Please refer to string to binary conversion syntax")
-            
-        # self.currentInstanceAttr.addVal(val)
-        # self.currentInstance.addInstanceAttr(self.currentInstanceAttr)
-        
-        # try:
-        #     definesAttr = self.defines[self.currentInstance.getInstanceType()].getAttributes()
-        # except:
-        #     raise Exception("Node type : {} is not defined".format(self.currentInstance.getInstanceType()))
-        # try:
-        #     dataType = definesAttr[self.currentInstanceAttr.items()[0]]
-        # except: 
-        #     raise Exception("Node type : {} is not having the attributes : {}".format(
-        #         self.currentInstance.getInstanceType(),self.currentInstanceAttr.items()[0]))
-            
-        # if  self.currentInstanceAttr.getOperator() == "==":
-        #     if self.isHostGraph == None :
-        #         self.rules[self.ruleName].addParameters(self.currentInstanceAttr.items()[1],dataType)
-        #     else : 
-        #         raise Exception("The Parameters cannot be assinged in Host")
         return self.visitChildren(ctx)
     
     def visitParametricInstanceAttrval(self, ctx:AGLParser.ParametricInstanceAttrvalContext):
