@@ -287,6 +287,24 @@ class AGLListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by AGLParser#binstr2int.
+    def enterBinstr2int(self, ctx:AGLParser.Binstr2intContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#binstr2int.
+    def exitBinstr2int(self, ctx:AGLParser.Binstr2intContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#parametricInstanceAttrval.
+    def enterParametricInstanceAttrval(self, ctx:AGLParser.ParametricInstanceAttrvalContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#parametricInstanceAttrval.
+    def exitParametricInstanceAttrval(self, ctx:AGLParser.ParametricInstanceAttrvalContext):
+        pass
+
+
     # Enter a parse tree produced by AGLParser#instanceports.
     def enterInstanceports(self, ctx:AGLParser.InstanceportsContext):
         pass
@@ -536,6 +554,15 @@ class AGLListener(ParseTreeListener):
 
     # Exit a parse tree produced by AGLParser#expr_val.
     def exitExpr_val(self, ctx:AGLParser.Expr_valContext):
+        pass
+
+
+    # Enter a parse tree produced by AGLParser#parametric_val.
+    def enterParametric_val(self, ctx:AGLParser.Parametric_valContext):
+        pass
+
+    # Exit a parse tree produced by AGLParser#parametric_val.
+    def exitParametric_val(self, ctx:AGLParser.Parametric_valContext):
         pass
 
 

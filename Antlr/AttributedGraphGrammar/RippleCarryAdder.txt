@@ -1,67 +1,55 @@
 module RippleCarryAdder {
-	# attributes of the node will be in square brackets 
-	# ports will be in braces, port names will be ignore while converting to verilog
 	
-	define ADDER [ bit : int , current_bit: boolean ] (  A : in , B : in , Cin : in , Sum : in , Cout : out );
+	define ADDER [ bit : int , current_bit: boolean ] (  A : in , B : in , Cin : in , Sum : out , Cout : out );
 	define INPUT [ bit : int ] (input_port : out );
-	define OUTPUT [ bit : int ] ( output_port : out );
+	define OUTPUT [ bit : int ] ( output_port : in );
 	
 	
-	RippleCarryAdder {
-		# Host Graph 
-	
-	}
+	RippleCarryAdder {}
 
 	rule Initialization {
 		# rule is the keyword to define an rule 
 		# Initialization is the name of the rule 
 		sub {}
-        add U1 INPUT [ bit <- 0];
-        add U2 INPUT [ bit <- 0];
-        add U3 ADDER [ bit <- 0, current_bit <- true ] (A = U1.input_port,B = U2.input_port);
-        add U4 OUTPUT [ bit <- 0] (output_port = U3.Sum);
-		# sub is the keyword to define the LHS graph 
-		# add is the keyword to add to the LHS graph 
-		# del is the keyword to delete from the LHS graph
-		# add and del should be used only outside sub block 
-		
-
+        add U1 INPUT [ bit = 0];
+        add U2 INPUT [ bit = 0];
+        add U3 ADDER [ bit = 0, current_bit = True ] (U1.input_port->A, U2.input_port->B );
+        add U4 OUTPUT [ bit = 0] ( U3.Sum ->output_port);
     }
     
 	rule Main_Rule {
 		sub {
-                U1 INPUT [ bit <- bit1];  # instantiating the INPUT node 
-                U2 INPUT [ bit <- bit1];
-                U4 OUTPUT [ bit <- bit1];
-                U3 ADDER[ bit <- bit1, current_bit <- true ] (A = U1.input_port,B = U2.input_port,
-															  Sum = U4.output_port )
-				# instantiating ADDER node 
+                U1 INPUT [ bit == bit1];  # instantiating the INPUT node 
+                U2 INPUT [ bit = bit1];
+                U3 ADDER[ bit = bit1, current_bit = True ] (U1.input_port -> A,U2.input_port->B)
+				U4 OUTPUT [ bit = bit1](U3.Sum->output_port);
             }
-        U3[current_bit <- false] # sytax to change the attribute value
-        add U5 INPUT [ bit <- bit1+1];
-        add U6 INPUT [ bit <- bit1+1];
-        add U7 OUPUT [ bit <- bit1+1];
-        add U8 ADDER[ bit <- bit1+1,current_bit <- false ](A = U5.input_port ,B = U6.output_port,
-                                                    		Cin = U3.Cout , Sum = U7.output_port );
+        U3[current_bit = False ] 
+        add U5 INPUT [ bit = bit1+1];
+        add U6 INPUT [ bit = bit1+1];
+        
+        add U8 ADDER[ bit = bit1+1,current_bit = False ]( U5.input_port-> A ,U6.output_port -> B,
+                                                    	U3.Cout->Cin);
+		add U7 OUPUT [ bit = bit1+1](U8.Sum->output_port);
     }
     
     rule Termination {
         sub {
             
-            U1 INPUT [ bit <- bit1];
-            U2 INPUT [ bit <- bit1];
-            U3 ADDER [ bit <- bit1,current_bit <- true ] (A = U1.input_port,B = U2.input_port);
-            U4 OUTPUT [ bit <- bit1] (output_port = U3.Sum);
+            U1 INPUT [ bit == bit1];
+            U2 INPUT [ bit = bit1];
+            U3 ADDER [ bit = bit1, current_bit = True ] (U1.input_port -> A, U2.input_port-> B);
+            U4 OUTPUT [ bit = bit1] (U3.Sum -> output_port);
                 
         }
-        add U5 OUTPUT[ bit <- bit1+1](U4.Cout);    
+        add U5 OUTPUT[ bit  = bit1+1](U4.Cout -> output_port );    
 		
     }
     
     rulesequence {     
-		# subsequence is the keyword to add the group of rules together
+		
         subsequence : 1 {                                       
-            Initialization : 1;   # rulename : iteration count 
+            Initialization : 1; 
             Main_Rule : 10;
             Termination : 1;                                     
         }

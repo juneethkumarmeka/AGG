@@ -62,7 +62,7 @@ instance : instancename instancetype instanceattributes instanceports instancese
             | instancename instancetype instanceattributes instancesemicolon 
             | instancename instancetype instanceports instancesemicolon 
             | instancename instanceports instancesemicolon 
-            | instancename instancesemicolon            
+            | instancename instancetype instancesemicolon            
             ;
 instanceconnection: connections connectionsemicolon ;
 
@@ -79,18 +79,23 @@ instanceattributes : '[' instanceattribute (',' instanceattribute)*? ']';
 instanceattribute : instanceattrkey instanceattributeoperator instanceattrval;
 
 instanceattributeoperator : '='
-                          | '==';
+                          | ':=';
                  
 instanceattrkey : ID ;
 
 instanceattrval  :  NUM
-                 | Binstr2int
+                 | binstr2int
                  | STRING_Note
                  | expr_val
                  | Boolean
-                 | ID;
-                 
-Binstr2int : 'binstr2int' '(' ID ')';
+                 | ID
+                 | parametric_val;
+
+
+
+binstr2int : 'binstr2int' '(' ID | parametricInstanceAttrval ')';
+
+parametricInstanceAttrval : ID'.'ID; 
 
 Boolean : 'True'
         | 'False';
@@ -162,12 +167,19 @@ expr : conditionalVal conditionaloperators conditionalVal semicolon;
 conditionalVal : ID 
                 | STRING_Note
                 | NUM 
-                | expr_val; 
+                | parametric_val; 
 
 expr_val : ID 
          | ID operators ID 
          | ID operators STRING_Note
          | ID operators NUM;
+
+parametric_val: parametricInstanceAttrval 
+              | parametricInstanceAttrval operators ID 
+              | parametricInstanceAttrval operators STRING_Note
+              | parametricInstanceAttrval operators NUM
+              | parametricInstanceAttrval operators parametricInstanceAttrval
+              ;
          
          
 operators : '+'

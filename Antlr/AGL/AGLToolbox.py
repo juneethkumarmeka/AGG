@@ -114,7 +114,8 @@ class Rule:
         self.AC.append(val)
     
     def addParameters(self,key,val):
-        self.parameters[key] = val 
+        if key not in self.parameters.keys(): 
+            self.parameters[key] = val 
               
     def getNACs(self): return self.NACs
         
@@ -322,9 +323,9 @@ class Instance:
     def getInstance(self): return self 
     
 class InstanceAttr: 
-    def __init__(self):
-        self.key = None 
-        self.val = None 
+    def __init__(self,key=None,val = None):
+        self.key = key
+        self.val = val
     
     def addKey(self ,key):
         self.key = key 

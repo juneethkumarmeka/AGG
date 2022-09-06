@@ -1,123 +1,123 @@
 module LevelBasedGenerator {
-	# ZF -> zero fanout 
-	# GT -> Gate Type 
-	# CL -> Current level 
-	# NL -> Next Level 
-	# GS -> Gate Assignment Status 
+	// ZF -> zero fanout 
+	// GT -> Gate Type 
+	// CL -> Current level 
+	// NL -> Next Level 
+	// GS -> Gate Assignment Status 
 	
 	define INPUT[ZF : boolean ](OUT1 : out );
 	define NT[GT : String , ZF : boolean , GS : boolean , CL : boolean ,NL : boolean ] (IN1 : in , IN2 : in , OUT1 : out );
 	rule Input_Init {
 		sub {}
-		add U1 INPUT[ZF <- true ]();
+		add U1 INPUT[ZF = True ];
 	}
 	rule IN_Z_Z {
 		sub {
-			U1 INPUT[ZF <- true ]();
-			U2 INPUT[ZF <- true ]();
+			U1 INPUT[ZF = True ];
+			U2 INPUT[ZF = True ];
 		}
-		add U3 NT[ZF <- true , GS <- false , CL <- false , NL <- true ](IN1 = U1.OUT1, IN2 = U2.OUT2 );
-		U1[ZF <- false ];
-		U2[Zf <- false ];
+		add U3 NT[ZF = True , GS = False , CL = False , NL = True ]( U1.OUT1->IN1 ,  U2.OUT2->IN2 );
+		U1[ZF = False ];
+		U2[Zf = False ];
 	}
 	
 	rule IN_Z_NZ {
 		sub {
-			U1 INPUT[ZF <- true ]();
-			U2 INPUT[ZF <- false]();
+			U1 INPUT[ZF = True ];
+			U2 INPUT[ZF = False ];
 		}
-		add U3 NT[ZF <- true , GS <- false , CL <- false , NL <- true ](IN1 = U1.OUT1, IN2 = U2.OUT2 );
-		U1[ZF <- false ];
-		U2[Zf <- false ];
+		add U3 NT[ZF = True , GS = False , CL = False , NL = True ]( U1.OUT1 -> IN1 , U2.OUT2 -> IN2 );
+		U1[ZF = False ];
+		U2[Zf = False ];
 	}
 	
 	rule IN_NZ_NZ {
 		sub {
-			U1 INPUT[ZF <- false ]();
-			U2 INPUT[ZF <- false ]();
+			U1 INPUT[ZF = False ];
+			U2 INPUT[ZF = False ];
 		}
-		add U3 NT[ZF <- true , GS <- false , CL <- false , NL <- true ](IN1 = U1.OUT1, IN2 = U2.OUT2 );
-		U1[ZF <- false ];
-		U2[Zf <- false ];
+		add U3 NT[ZF = True , GS = False , CL = False , NL = True ](U1.OUT1 -> IN1 ,  U2.OUT2-> IN2 );
+		U1[ZF = False ];
+		U2[Zf = False ];
 	}
 	
 	rule NT_Z_Z {
 		sub {
-			U1 NT[ZF <- true ,CL <- true , NL <- false ]();
-			U2 NT[ZF <- true ,CL <- true , NL <- false ]();
+			U1 NT[ZF = True ,CL = True , NL = False ];
+			U2 NT[ZF = True ,CL = True , NL = False ];
 		}
-		add U3 NT[ZF <- true , GS <- false , CL <- false , NL <- true ](IN1 = U1.OUT1, IN2 = U2.OUT2 );
-		U1[ZF <- false ];
-		U2[Zf <- false ];
+		add U3 NT[ZF = True , GS = False , CL = False , NL = True ](U1.OUT1 -> IN1,  U2.OUT2-> IN2 );
+		U1[ZF = False ];
+		U2[Zf = False ];
 	}
 	
 	rule NT_Z_NZ {
 		sub {
-			U1 NT[ZF <- true ,CL <- true , NL <- false ]();
-			U2 NT[ZF <- false ,CL <- true , NL <- false ]();
+			U1 NT[ZF = True ,CL = True , NL = False ];
+			U2 NT[ZF = False ,CL = True , NL = False ];
 		}
-		add U3 NT[ZF <- true , GS <- false , CL <- false , NL <- true ](IN1 = U1.OUT1, IN2 = U2.OUT2 );
-		U1[ZF <- false ];
-		U2[Zf <- false ];
+		add U3 NT[ZF = True , GS = False , CL = False , NL = True ](U1.OUT1 -> IN1, U2.OUT2 -> IN2 );
+		U1[ZF = False ];
+		U2[Zf = False ];
 	}
 	
 	rule NT_NZ_NZ {
 		sub {
-			U1 NT[ZF <- false ,CL <- true , NL <- false ]();
-			U2 NT[ZF <- false ,CL <- true , NL <- false ]();
+			U1 NT[ZF = False ,CL = True , NL = False ];
+			U2 NT[ZF = False ,CL = True , NL = False ];
 		}
-		add U3 NT[ZF <- true , GS <- false , CL <- false , NL <- true ](IN1 = U1.OUT1, IN2 = U2.OUT2 );
-		U1[ZF <- false ];
-		U2[Zf <- false ];
+		add U3 NT[ZF = True , GS = False , CL = False , NL = True ]( U1.OUT1 -> IN1,  U2.OUT2->IN2 );
+		U1[ZF = False ];
+		U2[Zf = False ];
 	}
 	
 	rule Assign_And {
 		sub {
-			U1 NT[GS <- false ]();
+			U1 NT[GS = False ];
 		}
-		U1[GS <- true , GT = "and" ];
+		U1[GS = True , GT = "and" ];
 	}
 	
 	rule Assign_Or {
 		sub {
-			U1 NT[GS <- false ]();
+			U1 NT[GS = False ];
 		}
-		U1[GS <- true , GT = "or" ];
+		U1[GS = True , GT = "or" ];
 	}
 	
 	rule Assign_Xor {
 		sub {
-			U1 NT[GS <- false ]();
+			U1 NT[GS = False ];
 		}
-		U1[GS <- true , GT = "xor" ];
+		U1[GS = True , GT = "xor" ];
 	}
 	
 	rule Assign_Xnor {
 		sub {
-			U1 NT[GS <- false ]();
+			U1 NT[GS = False ];
 		}
-		U1[GS <- true , GT = "xnor" ];
+		U1[GS = True , GT = "xnor" ];
 	}
 	
 	rule Assign_Nand {
 		sub {
-			U1 NT[GS <- false ]();
+			U1 NT[GS = False ];
 		}
-		U1[GS <- true , GT = "nand" ];
+		U1[GS = True , GT = "nand" ];
 	}
 	
 	rule Assign_Nor {
 		sub {
-			U1 NT[GS <- false ]();
+			U1 NT[GS = False ];
 		}
-		U1[GS <- true , GT = "nor" ];
+		U1[GS = True , GT = "nor" ];
 	}
 	
 	rule Change_Level {
 		sub {
-			U1 NT[ZF <- true ,CL <- false , NL <- true ]();
+			U1 NT[ZF = True ,CL = False , NL = True ];
 		}
-		U1[CL <- true , NL <- false ];
+		U1[CL = True , NL = False ];
 	}
 	
 	rulesequence {
