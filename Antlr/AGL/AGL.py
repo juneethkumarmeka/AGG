@@ -224,13 +224,16 @@ class AGLData(AGLVisitor):
                 assert not(operator == ':='), "Constrains operator ':=' cannot be used for Assigments\
                     use '=' for the assignment operation"
                 string = ''
-                for eachChild in ctx.children: 
+                for eachChild in ctx.children[0].children: 
                     binStrChildType = type(eachChild).__name__
-                    if binStrChildType == "ParametricInstanceAttrvalContext": 
-                        (instanceName,instanceAttr) = eachChild.getText().split(".")
-                        string += "{}_{}".format(instanceName,instanceAttr)
-                    else : 
-                        string += eachChild.getText()
+                    if binStrChildType == "Binstr2intvalContext":
+                        binStr2intVal = eachChild.children[0]
+                        binStr2intValType = type(eachChild.children[0]).__name__
+                        if binStr2intValType == "ParametricInstanceAttrvalContext": 
+                            (instanceName,instanceAttr) = binStr2intVal.getText().split(".")
+                            string += "{}_{}".format(instanceName,instanceAttr)
+                        else : 
+                            string += binStr2intVal.getText()
                         
                 string = "Integer.parseInt({},2)".format(string)
                 

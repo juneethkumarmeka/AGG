@@ -93,7 +93,10 @@ instanceattrval  :  NUM
 
 
 
-binstr2int : 'binstr2int' '(' ID | parametricInstanceAttrval ')';
+binstr2int : 'binstr2int' '(' binstr2intval ')';
+
+binstr2intval : ID 
+              | parametricInstanceAttrval; 
 
 parametricInstanceAttrval : ID'.'ID; 
 

@@ -135,7 +135,7 @@ class NX2Verilog:
                 
     def writing(self):
         for each in self.nodeNames: 
-            if not (each in self.outputs and each in self.outputs): 
+            if not (each in self.outputs or each in self.outputs): 
                 self.wire.append(each)
         
         in_output = ",".join(self.inputs)+","+",".join(self.outputs)
