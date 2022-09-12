@@ -188,6 +188,9 @@ class AGLData(AGLVisitor):
                     instanceName = leftGraphInstanceObj.getInstanceName()
                     instanceAttrName = self.currentInstanceAttr.items()[0]
                     instanceAttrVal = "{}_{}".format(instanceName,instanceAttrName)
+                    
+                    dataType = type(val).__name__
+                    self.rules[self.ruleName].addParameters(instanceAttrVal,dataType)
                     try: 
                         leftGraphInstanceObj.getInstanceAttrs()[self.currentInstanceAttr.items()[0]]
                     except:
