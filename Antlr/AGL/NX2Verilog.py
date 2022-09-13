@@ -66,8 +66,10 @@ class NX2Verilog:
                 
                 
                 if len(predecessors) == 0: 
-                    self.inputs.append(successors[0])
-                    self.nodeNames[successors[0]] = None 
+                    try : 
+                        self.inputs.append(successors[0])
+                        self.nodeNames[successors[0]] = None 
+                    except : pass 
                     if self.instances[eachnode].get_type().lower() == "input": 
                         del self.instances[eachnode]
                     else: 
@@ -83,14 +85,14 @@ class NX2Verilog:
                             
                     
                 if len(successors) == 0 : 
-                    # try:
-                    inputPort2Ouput = list(self.graph.predecessors(eachnode))[0]
-                    outputPort = list(self.graph.predecessors(inputPort2Ouput))[0]
-                    self.outputs.append(outputPort)
-                    self.nodeNames[outputPort] = None 
-                    if self.instances[eachnode].get_type().lower() == "output":
-                        del self.instances[eachnode]
-                    # except: pass 
+                    try:
+                        inputPort2Ouput = list(self.graph.predecessors(eachnode))[0]
+                        outputPort = list(self.graph.predecessors(inputPort2Ouput))[0]
+                        self.outputs.append(outputPort)
+                        self.nodeNames[outputPort] = None 
+                        if self.instances[eachnode].get_type().lower() == "output":
+                            del self.instances[eachnode]
+                    except: pass 
                 else: 
                     for eachsuccessor in successors: 
                         if len(list(self.graph.successors(eachsuccessor))) == 0: 

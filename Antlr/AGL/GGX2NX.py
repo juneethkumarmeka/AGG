@@ -122,8 +122,10 @@ class GGX2NX:
                                 for eachlevel2 in each:
                                     try: 
                                         if(eachlevel2.attrib["type"] == nodetypedata.getGateID()):
-                                            
-                                            gatename = str(eachlevel2[0][0].text).lower()
+                                            try:
+                                                gatename = eval(eachlevel2[0][0][0].text).lower()
+                                            except : 
+                                                gatename = str(eachlevel2[0][0].text).lower()
                                             nodetypedata.addGateName(gatename)
                                     except: 
                                         pass 

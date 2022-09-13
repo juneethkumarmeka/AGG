@@ -177,8 +177,13 @@ class AGLData(AGLVisitor):
                         
                 if ctx.NUM(): 
                     val = int(ctx.getText())
-                if ctx.ID() or ctx.STRING_Note(): 
+                if ctx.ID(): 
                     val = ctx.getText()
+            
+                if ctx.STRING_Note(): 
+                    val = ctx.getText()
+                    val = eval(val)
+            
                     
                 if self.isModifyAttr: 
                     leftGraphInstances = self.rules[self.ruleName].getLHS().getInstances() 
